@@ -4,6 +4,7 @@ pillow>=9.5.0
 numpy
 pandas
 scikit-learn
+seaborn
 rich
 markdown-it-py==4.0.0
 mdurl==0.1.2
