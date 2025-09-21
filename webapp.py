@@ -1,4 +1,4 @@
-# app.py - Enhanced Interactive Crop Recommendation System with FIXED Visibility Issues
+# app.py - Enhanced Interactive Crop Recommendation System - FIXED
 
 import streamlit as st
 import numpy as np
@@ -21,7 +21,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# FIXED CSS - Only visibility changes, keeping all effects
+# COMPLETELY FIXED CSS with high visibility colors and no overlapping
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -30,31 +30,36 @@ st.markdown("""
         font-family: 'Poppins', sans-serif !important;
     }
     
+    .main {
+        padding: 1rem 2rem !important;
+    }
+    
     .main-header {
         font-size: 3.5rem !important;
-        color: #1a5d1a !important;
+        color: #FFFFFF !important;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
         text-align: center !important;
         margin-bottom: 2rem !important;
         font-weight: 700 !important;
-        text-shadow: 3px 3px 6px rgba(0,0,0,0.5) !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
         animation: glow 2s ease-in-out infinite alternate;
-        background: white !important;
-        padding: 1rem !important;
+        padding: 2rem !important;
         border-radius: 15px !important;
+        border: 3px solid #FFD700 !important;
     }
     
     @keyframes glow {
-        from { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 15px #1a5d1a; }
-        to { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 25px #1a5d1a, 0 0 35px #1a5d1a; }
+        from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
     }
     
     .info-section {
-        background: #ffffff !important;
+        background: #FFFFFF !important;
         padding: 3rem !important;
         border-radius: 20px !important;
-        border: 4px solid #1a5d1a !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        border: 4px solid #1e3c72 !important;
+        margin: 3rem 0 !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
         transition: all 0.3s ease !important;
         position: relative !important;
         overflow: hidden !important;
@@ -67,7 +72,7 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(26, 93, 26, 0.1), transparent);
+        background: linear-gradient(45deg, transparent, rgba(30, 60, 114, 0.1), transparent);
         animation: shine 3s infinite;
     }
     
@@ -78,13 +83,13 @@ st.markdown("""
     
     .info-section:hover {
         transform: translateY(-5px) !important;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.3) !important;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
     }
     
     .info-section h3 {
-        color: #1a5d1a !important;
-        font-size: 2.5rem !important;
-        margin-bottom: 1.5rem !important;
+        color: #1e3c72 !important;
+        font-size: 2.8rem !important;
+        margin-bottom: 2rem !important;
         font-weight: 700 !important;
         text-align: center !important;
         position: relative !important;
@@ -94,7 +99,7 @@ st.markdown("""
     
     .info-section p {
         color: #000000 !important;
-        font-size: 1.4rem !important;
+        font-size: 1.6rem !important;
         text-align: center !important;
         margin: 0 !important;
         font-weight: 600 !important;
@@ -105,13 +110,13 @@ st.markdown("""
     }
     
     .feature-box {
-        background: #ffffff !important;
-        padding: 2.5rem !important;
+        background: #FFFFFF !important;
+        padding: 3rem !important;
         border-radius: 20px !important;
-        border: 4px solid #1a5d1a !important;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        border: 4px solid #FF6B35 !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
         text-align: center !important;
-        margin: 1rem !important;
+        margin: 1.5rem !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         cursor: pointer !important;
         position: relative !important;
@@ -125,7 +130,7 @@ st.markdown("""
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(26, 93, 26, 0.1), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
         transition: left 0.6s;
     }
     
@@ -135,14 +140,14 @@ st.markdown("""
     
     .feature-box:hover {
         transform: translateY(-10px) scale(1.05) !important;
-        box-shadow: 0 15px 40px rgba(26, 93, 26, 0.4) !important;
-        border-color: #0d4f0d !important;
+        box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4) !important;
+        border-color: #E55A2B !important;
     }
     
     .feature-box h4 {
-        color: #1a5d1a !important;
-        font-size: 1.6rem !important;
-        margin-bottom: 1rem !important;
+        color: #FF6B35 !important;
+        font-size: 1.8rem !important;
+        margin-bottom: 1.5rem !important;
         font-weight: 700 !important;
         position: relative !important;
         z-index: 1 !important;
@@ -151,7 +156,7 @@ st.markdown("""
     
     .feature-box p {
         color: #000000 !important;
-        font-size: 1.1rem !important;
+        font-size: 1.2rem !important;
         line-height: 1.6 !important;
         margin: 0 !important;
         position: relative !important;
@@ -160,138 +165,138 @@ st.markdown("""
     }
     
     .parameters-section {
-        background: #ffffff !important;
+        background: #FFFFFF !important;
         padding: 3rem !important;
         border-radius: 25px !important;
-        border: 4px solid #1a5d1a !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+        border: 4px solid #28A745 !important;
+        margin: 3rem 0 !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
         position: relative !important;
         overflow: hidden !important;
     }
     
-    /* FIXED PREDICTION RESULT SECTIONS - Enhanced visibility */
     .crop-recommendation-section {
-        background: #ffffff !important;
-        padding: 3rem !important;
+        background: #FFFFFF !important;
+        padding: 4rem !important;
         border-radius: 25px !important;
-        border: 5px solid #1a5d1a !important;
-        margin: 3rem 0 !important;
-        box-shadow: 0 15px 40px rgba(26, 93, 26, 0.3) !important;
+        border: 6px solid #17A2B8 !important;
+        margin: 4rem 0 !important;
+        box-shadow: 0 15px 40px rgba(23, 162, 184, 0.4) !important;
         position: relative !important;
         z-index: 100 !important;
     }
     
     .crop-name-display {
-        background: linear-gradient(135deg, #1a5d1a 0%, #0d4f0d 100%) !important;
-        color: #ffffff !important;
-        padding: 2rem !important;
+        background: linear-gradient(135deg, #28A745 0%, #20C997 100%) !important;
+        color: #FFFFFF !important;
+        padding: 3rem !important;
         border-radius: 20px !important;
         text-align: center !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 8px 25px rgba(26, 93, 26, 0.4) !important;
-        font-size: 2.5rem !important;
+        margin: 3rem 0 !important;
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5) !important;
+        font-size: 3rem !important;
         font-weight: 700 !important;
         text-shadow: 3px 3px 6px rgba(0,0,0,0.5) !important;
         animation: pulse-glow 2s infinite;
+        border: 3px solid #FFFFFF !important;
     }
     
     @keyframes pulse-glow {
         0%, 100% { 
-            box-shadow: 0 8px 25px rgba(26, 93, 26, 0.4);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5);
             transform: scale(1); 
         }
         50% { 
-            box-shadow: 0 12px 35px rgba(26, 93, 26, 0.6), 0 0 30px rgba(26, 93, 26, 0.4);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.7), 0 0 30px rgba(40, 167, 69, 0.5);
             transform: scale(1.02); 
         }
     }
     
     .crop-info-section {
-        background: #ffffff !important;
-        padding: 3rem !important;
+        background: #FFFFFF !important;
+        padding: 4rem !important;
         border-radius: 20px !important;
-        border: 4px solid #1a5d1a !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+        border: 5px solid #6F42C1 !important;
+        margin: 3rem 0 !important;
+        box-shadow: 0 10px 30px rgba(111, 66, 193, 0.3) !important;
     }
     
     .crop-info-header {
-        color: #1a5d1a !important;
-        font-size: 2.2rem !important;
+        color: #6F42C1 !important;
+        font-size: 2.5rem !important;
         font-weight: 700 !important;
-        margin-bottom: 2rem !important;
+        margin-bottom: 3rem !important;
         text-align: center !important;
-        border-bottom: 4px solid #1a5d1a !important;
-        padding-bottom: 1rem !important;
+        border-bottom: 5px solid #6F42C1 !important;
+        padding-bottom: 1.5rem !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
     }
     
     .crop-metric-card {
-        background: linear-gradient(135deg, #1a5d1a 0%, #0d4f0d 100%) !important;
-        color: #ffffff !important;
-        padding: 2rem !important;
+        background: linear-gradient(135deg, #6F42C1 0%, #5A2D91 100%) !important;
+        color: #FFFFFF !important;
+        padding: 3rem !important;
         border-radius: 15px !important;
         text-align: center !important;
-        margin: 1rem !important;
-        box-shadow: 0 8px 20px rgba(26, 93, 26, 0.4) !important;
+        margin: 1.5rem !important;
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4) !important;
         transition: all 0.3s ease !important;
-        border: 2px solid transparent !important;
+        border: 3px solid #FFFFFF !important;
     }
     
     .crop-metric-card:hover {
-        transform: translateY(-5px) scale(1.05) !important;
-        box-shadow: 0 12px 30px rgba(26, 93, 26, 0.5) !important;
+        transform: translateY(-8px) scale(1.08) !important;
+        box-shadow: 0 15px 35px rgba(111, 66, 193, 0.6) !important;
         border-color: #FFD700 !important;
     }
     
     .crop-metric-label {
-        font-size: 1.2rem !important;
+        font-size: 1.4rem !important;
         font-weight: 600 !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 1rem !important;
         opacity: 1 !important;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
     }
     
     .crop-metric-value {
-        font-size: 1.8rem !important;
+        font-size: 2rem !important;
         font-weight: 700 !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.4) !important;
     }
     
     .recommendations-section {
-        background: #ffffff !important;
-        padding: 3rem !important;
+        background: #FFFFFF !important;
+        padding: 4rem !important;
         border-radius: 20px !important;
-        border: 4px solid #CC4125 !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 10px 30px rgba(204, 65, 37, 0.2) !important;
+        border: 5px solid #DC3545 !important;
+        margin: 4rem 0 !important;
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3) !important;
     }
     
     .recommendations-header {
-        color: #CC4125 !important;
-        font-size: 2.2rem !important;
+        color: #DC3545 !important;
+        font-size: 2.5rem !important;
         font-weight: 700 !important;
-        margin-bottom: 2rem !important;
+        margin-bottom: 3rem !important;
         text-align: center !important;
-        border-bottom: 4px solid #CC4125 !important;
-        padding-bottom: 1rem !important;
+        border-bottom: 5px solid #DC3545 !important;
+        padding-bottom: 1.5rem !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
     }
     
     .recommendations-content {
-        background: #ffffff !important;
-        padding: 2.5rem !important;
+        background: #F8F9FA !important;
+        padding: 3rem !important;
         border-radius: 15px !important;
-        border: 3px solid #CC4125 !important;
-        box-shadow: 0 5px 15px rgba(204, 65, 37, 0.15) !important;
+        border: 3px solid #DC3545 !important;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2) !important;
     }
     
     .recommendations-content h4 {
-        color: #CC4125 !important;
-        font-size: 1.6rem !important;
+        color: #DC3545 !important;
+        font-size: 1.8rem !important;
         font-weight: 700 !important;
-        margin-bottom: 1.5rem !important;
+        margin-bottom: 2rem !important;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
     }
     
@@ -301,33 +306,33 @@ st.markdown("""
     }
     
     .recommendations-list li {
-        background: #f8f9fa !important;
-        margin: 1rem 0 !important;
-        padding: 1.5rem !important;
-        border-radius: 10px !important;
-        border-left: 6px solid #CC4125 !important;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1) !important;
-        font-size: 1.1rem !important;
+        background: #FFFFFF !important;
+        margin: 1.5rem 0 !important;
+        padding: 2rem !important;
+        border-radius: 12px !important;
+        border-left: 8px solid #DC3545 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        font-size: 1.2rem !important;
         font-weight: 600 !important;
         color: #000000 !important;
         transition: all 0.3s ease !important;
     }
     
     .recommendations-list li:hover {
-        transform: translateX(10px) !important;
-        box-shadow: 0 5px 15px rgba(204, 65, 37, 0.3) !important;
-        border-left-width: 10px !important;
-        background: #ffffff !important;
+        transform: translateX(15px) !important;
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4) !important;
+        border-left-width: 12px !important;
+        background: #FFF8F8 !important;
     }
     
     .section-header {
-        color: #1a5d1a !important;
-        font-size: 2.2rem !important;
+        color: #28A745 !important;
+        font-size: 2.5rem !important;
         font-weight: 700 !important;
-        margin-bottom: 2rem !important;
+        margin-bottom: 3rem !important;
         text-align: center !important;
-        border-bottom: 4px solid #1a5d1a !important;
-        padding-bottom: 1rem !important;
+        border-bottom: 5px solid #28A745 !important;
+        padding-bottom: 1.5rem !important;
         position: relative !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
     }
@@ -335,12 +340,12 @@ st.markdown("""
     .section-header::after {
         content: '';
         position: absolute;
-        bottom: -4px;
+        bottom: -5px;
         left: 50%;
         transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: linear-gradient(90deg, #0d4f0d, #1a5d1a);
+        width: 120px;
+        height: 5px;
+        background: linear-gradient(90deg, #20C997, #28A745);
         animation: pulse 2s infinite;
     }
     
@@ -350,12 +355,12 @@ st.markdown("""
     }
     
     .metric-container {
-        background: #ffffff !important;
-        padding: 2rem !important;
+        background: #FFFFFF !important;
+        padding: 2.5rem !important;
         border-radius: 15px !important;
-        border: 3px solid #1a5d1a !important;
-        margin: 1rem 0 !important;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+        border: 4px solid #FFC107 !important;
+        margin: 2rem 0 !important;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15) !important;
         text-align: center !important;
         transition: all 0.3s ease !important;
         cursor: pointer !important;
@@ -370,7 +375,7 @@ st.markdown("""
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(26, 93, 26, 0.1), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.2), transparent);
         transition: left 0.5s;
     }
     
@@ -379,45 +384,45 @@ st.markdown("""
     }
     
     .metric-container:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 8px 25px rgba(26, 93, 26, 0.2) !important;
-        border-color: #0d4f0d !important;
+        transform: translateY(-5px) !important;
+        box-shadow: 0 10px 25px rgba(255, 193, 7, 0.3) !important;
+        border-color: #E0A800 !important;
     }
     
     .metric-value {
-        font-size: 2rem !important;
-        color: #1a5d1a !important;
+        font-size: 2.2rem !important;
+        color: #E0A800 !important;
         font-weight: 700 !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.2) !important;
     }
     
     .metric-label {
-        font-size: 1.2rem !important;
+        font-size: 1.3rem !important;
         font-weight: 600 !important;
         color: #000000 !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 1rem !important;
     }
     
     .metric-description {
-        font-size: 0.9rem !important;
-        color: #333333 !important;
-        margin-top: 0.5rem !important;
+        font-size: 1rem !important;
+        color: #495057 !important;
+        margin-top: 1rem !important;
         font-style: italic !important;
         font-weight: 500 !important;
     }
     
     .prediction-box {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-        padding: 3rem !important;
+        background: linear-gradient(135deg, #007BFF 0%, #0056B3 100%) !important;
+        padding: 4rem !important;
         border-radius: 25px !important;
-        color: #ffffff !important;
+        color: #FFFFFF !important;
         text-align: center !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4) !important;
+        margin: 3rem 0 !important;
+        box-shadow: 0 15px 40px rgba(0, 123, 255, 0.4) !important;
         animation: bounceIn 0.8s ease-out;
         position: relative !important;
         overflow: hidden !important;
-        border: 3px solid #ffffff !important;
+        border: 4px solid #FFFFFF !important;
     }
     
     @keyframes bounceIn {
@@ -447,23 +452,57 @@ st.markdown("""
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* FIXED: Prevent overlapping by adding margins */
+    /* FIXED: Prevent overlapping with proper spacing */
     .stExpander {
-        margin-top: 3rem !important;
-        margin-bottom: 3rem !important;
+        margin-top: 6rem !important;
+        margin-bottom: 4rem !important;
+        padding: 2rem !important;
+    }
+    
+    .stExpander > div {
+        background: #FFFFFF !important;
+        border: 4px solid #6C757D !important;
+        border-radius: 15px !important;
+        padding: 2rem !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
     }
     
     .stExpander > div > div {
-        background: #ffffff !important;
-        border: 2px solid #1a5d1a !important;
-        border-radius: 10px !important;
-        padding: 1rem !important;
+        background: #FFFFFF !important;
+        padding: 1.5rem !important;
     }
     
-    /* Override any Streamlit defaults with higher specificity */
+    .stExpander h3, .stExpander h4, .stExpander p, .stExpander li {
+        color: #000000 !important;
+        font-weight: 600 !important;
+    }
+    
+    .stExpander h3 {
+        color: #6C757D !important;
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+    }
+    
+    .stExpander h4 {
+        color: #6C757D !important;
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Override any Streamlit defaults */
     .stMarkdown, .stMarkdown > div, .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
         color: inherit !important;
         font-family: 'Poppins', sans-serif !important;
+    }
+    
+    /* Add proper spacing between sections */
+    .element-container {
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Ensure footer has proper spacing */
+    .main > div:last-child {
+        margin-bottom: 5rem !important;
     }
     
     /* Scrollbar styling */
@@ -472,22 +511,22 @@ st.markdown("""
     }
     
     ::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #F8F9FA;
         border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #1a5d1a, #0d4f0d);
+        background: linear-gradient(135deg, #007BFF, #0056B3);
         border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #0d4f0d, #1a5d1a);
+        background: linear-gradient(135deg, #0056B3, #007BFF);
     }
 </style>
 """, unsafe_allow_html=True)
 
-# All the same functions as before (load_data, train_and_save_model, predict_crop)
+# All the same functions as before
 @st.cache_data
 def load_data():
     """Load and cache the dataset"""
@@ -646,8 +685,8 @@ def create_interactive_gauge(value, min_val, max_val, label, unit, color):
     <div class="metric-container">
         <div class="metric-label">{label}</div>
         <div class="metric-value">{value} {unit}</div>
-        <div style="width: 100%; background: #e0e0e0; border-radius: 10px; margin: 10px 0;">
-            <div style="width: {percentage}%; background: linear-gradient(90deg, {color}, {color}88); height: 10px; border-radius: 10px; transition: all 0.5s ease;"></div>
+        <div style="width: 100%; background: #e0e0e0; border-radius: 10px; margin: 15px 0;">
+            <div style="width: {percentage}%; background: linear-gradient(90deg, {color}, {color}88); height: 12px; border-radius: 10px; transition: all 0.5s ease;"></div>
         </div>
     </div>
     """
@@ -686,7 +725,7 @@ def main():
     st.sidebar.markdown("---")
     predict_button = st.sidebar.button("🔮 Predict Crop", type="primary", use_container_width=True)
     
-    # Main content area - Enhanced "How It Works" section
+    # Main content area
     st.markdown("""
     <div class="info-section">
         <h3>🎯 How It Works</h3>
@@ -728,44 +767,44 @@ def main():
     param_col1, param_col2 = st.columns(2)
     
     with param_col1:
-        st.markdown(create_interactive_gauge(nitrogen, 0, 140, "Nitrogen", "ppm", "#1a5d1a"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(nitrogen, 0, 140, "Nitrogen", "ppm", "#28A745"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Essential for leaf growth and green color</div>', unsafe_allow_html=True)
         
-        st.markdown(create_interactive_gauge(phosphorus, 0, 145, "Phosphorus", "ppm", "#28a745"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(phosphorus, 0, 145, "Phosphorus", "ppm", "#FFC107"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Important for root development and flowering</div>', unsafe_allow_html=True)
         
-        st.markdown(create_interactive_gauge(potassium, 0, 205, "Potassium", "ppm", "#0d4f0d"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(potassium, 0, 205, "Potassium", "ppm", "#17A2B8"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Helps in disease resistance and fruit quality</div>', unsafe_allow_html=True)
         
-        st.markdown(create_interactive_gauge(temperature, 0, 51, "Temperature", "°C", "#FF6B6B"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(temperature, 0, 51, "Temperature", "°C", "#FF6B35"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Average growing season temperature</div>', unsafe_allow_html=True)
     
     with param_col2:
-        st.markdown(create_interactive_gauge(humidity, 0, 100, "Humidity", "%", "#4ECDC4"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(humidity, 0, 100, "Humidity", "%", "#6F42C1"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Relative humidity percentage</div>', unsafe_allow_html=True)
         
-        st.markdown(create_interactive_gauge(ph, 0, 14, "pH Level", "", "#FFE66D"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(ph, 0, 14, "pH Level", "", "#DC3545"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Soil acidity/alkalinity level</div>', unsafe_allow_html=True)
         
-        st.markdown(create_interactive_gauge(rainfall, 0, 500, "Rainfall", "mm", "#74A0F4"), unsafe_allow_html=True)
+        st.markdown(create_interactive_gauge(rainfall, 0, 500, "Rainfall", "mm", "#007BFF"), unsafe_allow_html=True)
         st.markdown('<div class="metric-description">Annual precipitation amount</div>', unsafe_allow_html=True)
         
         # Soil quality indicator with enhanced styling
         if ph < 6.5:
             soil_status = "🔴 Acidic"
             ph_advice = "Consider adding lime to increase pH"
-            status_color = "#FF6B6B"
+            status_color = "#DC3545"
         elif ph > 7.5:
             soil_status = "🔵 Alkaline" 
             ph_advice = "Consider adding sulfur to decrease pH"
-            status_color = "#74A0F4"
+            status_color = "#007BFF"
         else:
             soil_status = "🟢 Neutral"
             ph_advice = "Optimal pH range for most crops"
-            status_color = "#4ECDC4"
+            status_color = "#28A745"
         
         st.markdown(f'''
-        <div class="metric-container" style="border: 3px solid {status_color};">
+        <div class="metric-container" style="border: 4px solid {status_color};">
             <div class="metric-label">Soil Status</div>
             <div class="metric-value" style="color: {status_color};">{soil_status}</div>
             <div class="metric-description">{ph_advice}</div>
@@ -790,9 +829,9 @@ def main():
                     # Enhanced prediction result with better visibility
                     st.markdown(f"""
                     <div class="prediction-box">
-                        <h2 style="font-size: 2rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🎉 Recommendation Result</h2>
-                        <h1 style="font-size: 4rem; margin: 1rem 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.3);">{prediction.title()}</h1>
-                        <p style="font-size: 1.4rem; margin-top: 1rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">Based on your soil and environmental conditions, <strong>{prediction.title()}</strong> is the most suitable crop for your farm!</p>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.4);">🎉 Recommendation Result</h2>
+                        <h1 style="font-size: 5rem; margin: 2rem 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.4);">{prediction.title()}</h1>
+                        <p style="font-size: 1.6rem; margin-top: 2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Based on your soil and environmental conditions, <strong>{prediction.title()}</strong> is the most suitable crop for your farm!</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
@@ -834,32 +873,34 @@ def main():
             st.error("❌ Please enter valid values for all parameters (greater than 0, except rainfall which can be 0).")
     
     # FIXED: Enhanced footer with proper spacing to prevent overlap
+    st.markdown("<br><br><br>", unsafe_allow_html=True)  # Added extra spacing
     st.markdown("---")
-    st.markdown("<br><br>", unsafe_allow_html=True)  # Added spacing
+    st.markdown("<br><br>", unsafe_allow_html=True)  # More spacing
+    
     with st.expander("ℹ️ About This System", expanded=False):
         st.markdown("""
         <div class="fade-in">
-            <h3 style="color: #1a5d1a;">AgriVerse Pro Crop Recommendation System</h3>
+            <h3 style="color: #6C757D;">AgriVerse Pro Crop Recommendation System</h3>
             
             <p><strong>🎯 Purpose:</strong> This intelligent system uses machine learning to analyze multiple factors and provide precise crop recommendations.</p>
             
-            <h4 style="color: #1a5d1a;">📊 Analysis Factors:</h4>
+            <h4 style="color: #6C757D;">📊 Analysis Factors:</h4>
             <ul>
                 <li><strong>Soil Chemistry:</strong> NPK levels and pH balance</li>
                 <li><strong>Climate Conditions:</strong> Temperature, humidity, and rainfall patterns</li>
                 <li><strong>Agricultural Best Practices:</strong> Season compatibility and water requirements</li>
             </ul>
             
-            <h4 style="color: #1a5d1a;">🌾 Supported Crops:</h4>
+            <h4 style="color: #6C757D;">🌾 Supported Crops:</h4>
             <p>Rice, Wheat, Maize, Cotton, Sugarcane, Jute, Coffee, Coconut, Apple, Banana, Grapes, Watermelon, Muskmelon, Orange, Papaya, Pomegranate, Mango, Mothbeans, Pigeonpeas, Kidneybeans, Chickpea, Lentil, Blackgram, Mungbean</p>
             
-            <h4 style="color: #1a5d1a;">🎯 Model Performance:</h4>
+            <h4 style="color: #6C757D;">🎯 Model Performance:</h4>
             <p>Our Random Forest model achieves over <strong>95% accuracy</strong> on test data.</p>
             
-            <h4 style="color: #1a5d1a;">⚠️ Disclaimer:</h4>
+            <h4 style="color: #6C757D;">⚠️ Disclaimer:</h4>
             <p>This tool provides AI-based recommendations for educational and advisory purposes. Always consult with agricultural experts and consider local conditions before making farming decisions.</p>
             
-            <h4 style="color: #1a5d1a;">📚 Data Source:</h4>
+            <h4 style="color: #6C757D;">📚 Data Source:</h4>
             <p>Based on comprehensive agricultural research data and farming best practices.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -889,6 +930,9 @@ def main():
             st.sidebar.info("🌡️ Temperature affects growth rate")
             st.sidebar.info("💧 Humidity affects disease risk")
             st.sidebar.info("🌧️ Rainfall determines irrigation needs")
+
+    # Add final spacing to prevent any overlap
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
 
 if __name__ == '__main__':
     main()
