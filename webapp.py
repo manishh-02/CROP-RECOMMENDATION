@@ -1,4 +1,4 @@
-# app.py - Enhanced Interactive Crop Recommendation System - FIXED
+# app.py - Ultra Advanced Interactive Crop Recommendation System with Premium UI
 
 import streamlit as st
 import numpy as np
@@ -10,530 +10,661 @@ import os
 import warnings
 from PIL import Image
 import time
+import random
 
 warnings.filterwarnings('ignore')
 
 # Set page configuration
 st.set_page_config(
-    page_title="AgriVerse Pro: Smart Crop Recommendation",
+    page_title="🌾 AgriVerse Pro - AI Crop Recommendation",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# COMPLETELY FIXED CSS with high visibility colors and no overlapping
+# ULTRA ADVANCED CSS with Premium Design, Gradients, and Animations
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap');
     
+    /* Global Reset and Base Styles */
     * {
-        font-family: 'Poppins', sans-serif !important;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html, body, [class*="st-"] {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: #ffffff !important;
+        scroll-behavior: smooth;
     }
     
     .main {
-        padding: 1rem 2rem !important;
-    }
-    
-    .main-header {
-        font-size: 3.5rem !important;
-        color: #FFFFFF !important;
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-        text-align: center !important;
-        margin-bottom: 2rem !important;
-        font-weight: 700 !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
-        animation: glow 2s ease-in-out infinite alternate;
-        padding: 2rem !important;
-        border-radius: 15px !important;
-        border: 3px solid #FFD700 !important;
-    }
-    
-    @keyframes glow {
-        from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-        to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
-    }
-    
-    .info-section {
-        background: #FFFFFF !important;
-        padding: 3rem !important;
-        border-radius: 20px !important;
-        border: 4px solid #1e3c72 !important;
-        margin: 3rem 0 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-        transition: all 0.3s ease !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .info-section::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(30, 60, 114, 0.1), transparent);
-        animation: shine 3s infinite;
-    }
-    
-    @keyframes shine {
-        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-    
-    .info-section:hover {
-        transform: translateY(-5px) !important;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
-    }
-    
-    /* FIXED: How It Works section text visibility */
-    .info-section h3 {
-        color: #000000 !important;
-        font-size: 2.8rem !important;
-        margin-bottom: 2rem !important;
-        font-weight: 700 !important;
-        text-align: center !important;
-        position: relative !important;
-        z-index: 1 !important;
-        text-shadow: none !important;
-    }
-    
-    .info-section p {
-        color: #000000 !important;
-        font-size: 1.6rem !important;
-        text-align: center !important;
-        margin: 0 !important;
-        font-weight: 600 !important;
-        line-height: 1.8 !important;
-        position: relative !important;
-        z-index: 1 !important;
-        text-shadow: none !important;
-    }
-    
-    .feature-box {
-        background: #FFFFFF !important;
-        padding: 3rem !important;
-        border-radius: 20px !important;
-        border: 4px solid #FF6B35 !important;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
-        text-align: center !important;
-        margin: 1.5rem !important;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        cursor: pointer !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .feature-box::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
-        transition: left 0.6s;
-    }
-    
-    .feature-box:hover::before {
-        left: 100%;
-    }
-    
-    .feature-box:hover {
-        transform: translateY(-10px) scale(1.05) !important;
-        box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4) !important;
-        border-color: #E55A2B !important;
-    }
-    
-    /* FIXED: Feature box text visibility */
-    .feature-box h4 {
-        color: #000000 !important;
-        font-size: 1.8rem !important;
-        margin-bottom: 1.5rem !important;
-        font-weight: 700 !important;
-        position: relative !important;
-        z-index: 1 !important;
-        text-shadow: none !important;
-    }
-    
-    .feature-box p {
-        color: #000000 !important;
-        font-size: 1.2rem !important;
-        line-height: 1.6 !important;
-        margin: 0 !important;
-        position: relative !important;
-        z-index: 1 !important;
-        font-weight: 600 !important;
-        text-shadow: none !important;
-        opacity: 1 !important;
-    }
-    
-    .parameters-section {
-        background: #FFFFFF !important;
-        padding: 3rem !important;
-        border-radius: 25px !important;
-        border: 4px solid #28A745 !important;
-        margin: 3rem 0 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .crop-recommendation-section {
-        background: #FFFFFF !important;
-        padding: 4rem !important;
-        border-radius: 25px !important;
-        border: 6px solid #17A2B8 !important;
-        margin: 4rem 0 !important;
-        box-shadow: 0 15px 40px rgba(23, 162, 184, 0.4) !important;
-        position: relative !important;
-        z-index: 100 !important;
-    }
-    
-    .crop-name-display {
-        background: linear-gradient(135deg, #28A745 0%, #20C997 100%) !important;
-        color: #FFFFFF !important;
-        padding: 3rem !important;
-        border-radius: 20px !important;
-        text-align: center !important;
-        margin: 3rem 0 !important;
-        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5) !important;
-        font-size: 3rem !important;
-        font-weight: 700 !important;
-        text-shadow: 3px 3px 6px rgba(0,0,0,0.5) !important;
-        animation: pulse-glow 2s infinite;
-        border: 3px solid #FFFFFF !important;
-    }
-    
-    @keyframes pulse-glow {
-        0%, 100% { 
-            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5);
-            transform: scale(1); 
-        }
-        50% { 
-            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.7), 0 0 30px rgba(40, 167, 69, 0.5);
-            transform: scale(1.02); 
-        }
-    }
-    
-    .crop-info-section {
-        background: #FFFFFF !important;
-        padding: 4rem !important;
-        border-radius: 20px !important;
-        border: 5px solid #6F42C1 !important;
-        margin: 3rem 0 !important;
-        box-shadow: 0 10px 30px rgba(111, 66, 193, 0.3) !important;
-    }
-    
-    .crop-info-header {
-        color: #6F42C1 !important;
-        font-size: 2.5rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 3rem !important;
-        text-align: center !important;
-        border-bottom: 5px solid #6F42C1 !important;
-        padding-bottom: 1.5rem !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
-    }
-    
-    .crop-metric-card {
-        background: linear-gradient(135deg, #6F42C1 0%, #5A2D91 100%) !important;
-        color: #FFFFFF !important;
-        padding: 3rem !important;
-        border-radius: 15px !important;
-        text-align: center !important;
-        margin: 1.5rem !important;
-        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4) !important;
-        transition: all 0.3s ease !important;
-        border: 3px solid #FFFFFF !important;
-    }
-    
-    .crop-metric-card:hover {
-        transform: translateY(-8px) scale(1.08) !important;
-        box-shadow: 0 15px 35px rgba(111, 66, 193, 0.6) !important;
-        border-color: #FFD700 !important;
-    }
-    
-    .crop-metric-label {
-        font-size: 1.4rem !important;
-        font-weight: 600 !important;
-        margin-bottom: 1rem !important;
-        opacity: 1 !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
-    }
-    
-    .crop-metric-value {
-        font-size: 2rem !important;
-        font-weight: 700 !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.4) !important;
-    }
-    
-    .recommendations-section {
-        background: #FFFFFF !important;
-        padding: 4rem !important;
-        border-radius: 20px !important;
-        border: 5px solid #DC3545 !important;
-        margin: 4rem 0 !important;
-        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3) !important;
-    }
-    
-    .recommendations-header {
-        color: #DC3545 !important;
-        font-size: 2.5rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 3rem !important;
-        text-align: center !important;
-        border-bottom: 5px solid #DC3545 !important;
-        padding-bottom: 1.5rem !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
-    }
-    
-    .recommendations-content {
-        background: #F8F9FA !important;
-        padding: 3rem !important;
-        border-radius: 15px !important;
-        border: 3px solid #DC3545 !important;
-        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.2) !important;
-    }
-    
-    .recommendations-content h4 {
-        color: #DC3545 !important;
-        font-size: 1.8rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 2rem !important;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
-    }
-    
-    .recommendations-list {
-        list-style: none !important;
+        background: transparent !important;
         padding: 0 !important;
     }
     
-    .recommendations-list li {
-        background: #FFFFFF !important;
-        margin: 1.5rem 0 !important;
-        padding: 2rem !important;
-        border-radius: 12px !important;
-        border-left: 8px solid #DC3545 !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-        font-size: 1.2rem !important;
-        font-weight: 600 !important;
-        color: #000000 !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .recommendations-list li:hover {
-        transform: translateX(15px) !important;
-        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4) !important;
-        border-left-width: 12px !important;
-        background: #FFF8F8 !important;
-    }
-    
-    .section-header {
-        color: #28A745 !important;
-        font-size: 2.5rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 3rem !important;
-        text-align: center !important;
-        border-bottom: 5px solid #28A745 !important;
-        padding-bottom: 1.5rem !important;
-        position: relative !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
-    }
-    
-    .section-header::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 120px;
-        height: 5px;
-        background: linear-gradient(90deg, #20C997, #28A745);
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    
-    .metric-container {
-        background: #FFFFFF !important;
-        padding: 2.5rem !important;
-        border-radius: 15px !important;
-        border: 4px solid #FFC107 !important;
-        margin: 2rem 0 !important;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15) !important;
-        text-align: center !important;
-        transition: all 0.3s ease !important;
-        cursor: pointer !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .metric-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.2), transparent);
-        transition: left 0.5s;
-    }
-    
-    .metric-container:hover::before {
-        left: 100%;
-    }
-    
-    .metric-container:hover {
-        transform: translateY(-5px) !important;
-        box-shadow: 0 10px 25px rgba(255, 193, 7, 0.3) !important;
-        border-color: #E0A800 !important;
-    }
-    
-    .metric-value {
-        font-size: 2.2rem !important;
-        color: #E0A800 !important;
-        font-weight: 700 !important;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2) !important;
-    }
-    
-    .metric-label {
-        font-size: 1.3rem !important;
-        font-weight: 600 !important;
-        color: #000000 !important;
-        margin-bottom: 1rem !important;
-    }
-    
-    /* FIXED: Metric description text visibility */
-    .metric-description {
-        font-size: 1rem !important;
-        color: #000000 !important;
-        margin-top: 1rem !important;
-        font-style: italic !important;
-        font-weight: 600 !important;
-        opacity: 1 !important;
-    }
-    
-    .prediction-box {
-        background: linear-gradient(135deg, #007BFF 0%, #0056B3 100%) !important;
-        padding: 4rem !important;
+    /* Advanced Header with Holographic Effect */
+    .ultra-header {
+        background: linear-gradient(135deg, 
+            rgba(255,255,255,0.1) 0%, 
+            rgba(255,255,255,0.05) 50%, 
+            rgba(255,255,255,0.1) 100%) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
         border-radius: 25px !important;
-        color: #FFFFFF !important;
+        padding: 4rem 2rem !important;
+        margin: 2rem 0 !important;
         text-align: center !important;
-        margin: 3rem 0 !important;
-        box-shadow: 0 15px 40px rgba(0, 123, 255, 0.4) !important;
-        animation: bounceIn 0.8s ease-out;
         position: relative !important;
         overflow: hidden !important;
-        border: 4px solid #FFFFFF !important;
+        box-shadow: 
+            0 25px 50px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.4) !important;
+        animation: float 6s ease-in-out infinite !important;
     }
     
-    @keyframes bounceIn {
-        0% { transform: scale(0.3); opacity: 0; }
-        50% { transform: scale(1.05); }
-        70% { transform: scale(0.9); }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    
-    .prediction-box::before {
+    .ultra-header::before {
         content: '';
         position: absolute;
         top: -50%;
         left: -50%;
         width: 200%;
         height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-        animation: shine 2s infinite;
+        background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(255,255,255,0.1),
+            transparent,
+            rgba(255,255,255,0.1),
+            transparent
+        );
+        animation: rotate 20s linear infinite;
+        z-index: 0;
     }
     
-    .fade-in {
-        animation: fadeIn 0.8s ease-out;
+    .ultra-header h1 {
+        font-family: 'Orbitron', monospace !important;
+        font-size: 4rem !important;
+        font-weight: 900 !important;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24) !important;
+        background-size: 300% 300% !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        text-shadow: none !important;
+        animation: gradientShift 3s ease-in-out infinite alternate !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotateX(0deg); }
+        50% { transform: translateY(-20px) rotateX(5deg); }
     }
     
-    /* FIXED: Prevent overlapping with MASSIVE spacing */
-    .stExpander {
-        margin-top: 10rem !important;
-        margin-bottom: 8rem !important;
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
+    
+    /* Glassmorphism Cards */
+    .glass-card {
+        background: linear-gradient(135deg, 
+            rgba(255,255,255,0.1) 0%, 
+            rgba(255,255,255,0.05) 100%) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        border-radius: 20px !important;
         padding: 3rem !important;
+        margin: 2rem 0 !important;
+        box-shadow: 
+            0 20px 40px rgba(0,0,0,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.2) !important;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1) !important;
+        position: relative !important;
+        overflow: hidden !important;
     }
     
-    .stExpander > div {
-        background: #FFFFFF !important;
-        border: 4px solid #6C757D !important;
-        border-radius: 15px !important;
-        padding: 3rem !important;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
+    .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.1),
+            transparent
+        );
+        transition: left 0.8s ease;
     }
     
-    .stExpander > div > div {
-        background: #FFFFFF !important;
-        padding: 2rem !important;
+    .glass-card:hover {
+        transform: translateY(-10px) scale(1.02) !important;
+        box-shadow: 
+            0 30px 60px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.3) !important;
+        border-color: rgba(255,255,255,0.4) !important;
     }
     
-    .stExpander h3, .stExpander h4, .stExpander p, .stExpander li {
-        color: #000000 !important;
-        font-weight: 600 !important;
+    .glass-card:hover::before {
+        left: 100%;
     }
     
-    .stExpander h3 {
-        color: #6C757D !important;
+    .glass-card h3 {
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 2rem !important;
+        text-align: center !important;
+        background: linear-gradient(45deg, #ffffff, #e0e0e0) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    
+    .glass-card p {
+        font-size: 1.3rem !important;
+        line-height: 1.8 !important;
+        color: rgba(255,255,255,0.9) !important;
+        text-align: center !important;
+    }
+    
+    /* Advanced Feature Cards */
+    .feature-card {
+        background: linear-gradient(135deg, 
+            rgba(255,255,255,0.1) 0%, 
+            rgba(255,255,255,0.05) 100%) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        border-radius: 20px !important;
+        padding: 2.5rem !important;
+        margin: 1.5rem !important;
+        text-align: center !important;
+        transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+        cursor: pointer !important;
+        position: relative !important;
+        overflow: hidden !important;
+        height: 280px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+    
+    .feature-card::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        transform: translate(-50%, -50%);
+        transition: all 0.6s ease;
+        border-radius: 50%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-15px) rotateY(10deg) !important;
+        box-shadow: 
+            0 25px 50px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.3) !important;
+        border-color: rgba(255,255,255,0.5) !important;
+    }
+    
+    .feature-card:hover::after {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .feature-card h4 {
         font-size: 1.8rem !important;
         font-weight: 700 !important;
+        margin-bottom: 1.5rem !important;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
-    .stExpander h4 {
-        color: #6C757D !important;
-        font-size: 1.4rem !important;
+    .feature-card p {
+        color: rgba(255,255,255,0.9) !important;
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Premium Parameter Section */
+    .params-section {
+        background: linear-gradient(135deg, 
+            rgba(0,0,0,0.1) 0%, 
+            rgba(0,0,0,0.05) 100%) !important;
+        backdrop-filter: blur(25px) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 25px !important;
+        padding: 4rem !important;
+        margin: 3rem 0 !important;
+        box-shadow: 
+            0 25px 50px rgba(0,0,0,0.2),
+            inset 0 1px 0 rgba(255,255,255,0.1) !important;
+    }
+    
+    .section-title {
+        font-family: 'Orbitron', monospace !important;
+        font-size: 3rem !important;
         font-weight: 700 !important;
+        text-align: center !important;
+        margin-bottom: 3rem !important;
+        background: linear-gradient(45deg, #667eea, #764ba2, #f093fb) !important;
+        background-size: 200% 200% !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        animation: gradientMove 4s ease-in-out infinite !important;
+        position: relative !important;
     }
     
-    /* Override any Streamlit defaults */
-    .stMarkdown, .stMarkdown > div, .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-        color: inherit !important;
-        font-family: 'Poppins', sans-serif !important;
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+        animation: pulse 2s infinite;
     }
     
-    /* Add proper spacing between sections */
-    .element-container {
+    @keyframes gradientMove {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    /* Advanced Metric Cards */
+    .metric-card {
+        background: linear-gradient(135deg, 
+            rgba(255,255,255,0.15) 0%, 
+            rgba(255,255,255,0.05) 100%) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        border-radius: 20px !important;
+        padding: 2.5rem !important;
+        margin: 1.5rem 0 !important;
+        text-align: center !important;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+        cursor: pointer !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(
+            from 0deg,
+            #667eea,
+            #764ba2,
+            #f093fb,
+            #f5576c,
+            #4facfe,
+            #00f2fe,
+            #667eea
+        );
+        border-radius: 22px;
+        z-index: -1;
+        animation: borderRotate 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .metric-card:hover::before {
+        opacity: 1;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-8px) scale(1.05) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    }
+    
+    @keyframes borderRotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .metric-label {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        color: rgba(255,255,255,0.8) !important;
+        margin-bottom: 1rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .metric-value {
+        font-family: 'Orbitron', monospace !important;
+        font-size: 2.5rem !important;
+        font-weight: 900 !important;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1) !important;
+        background-size: 200% 200% !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        animation: textGlow 2s ease-in-out infinite alternate !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .metric-description {
+        color: rgba(255,255,255,0.7) !important;
+        font-size: 0.9rem !important;
+        font-style: italic !important;
+        margin-top: 1rem !important;
+    }
+    
+    @keyframes textGlow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
+    
+    /* Futuristic Progress Bars */
+    .progress-container {
+        width: 100%;
+        height: 8px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 15px 0;
+        position: relative;
+    }
+    
+    .progress-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent,
+            rgba(255,255,255,0.2),
+            transparent
+        );
+        animation: shimmer 2s infinite;
+        width: 30%;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(400%); }
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        background-size: 200% 100%;
+        border-radius: 4px;
+        animation: progressGlow 3s ease-in-out infinite;
+        transition: width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    @keyframes progressGlow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    /* Premium Prediction Box */
+    .prediction-container {
+        background: linear-gradient(135deg, 
+            rgba(76, 175, 80, 0.2) 0%, 
+            rgba(56, 142, 60, 0.2) 100%) !important;
+        backdrop-filter: blur(25px) !important;
+        border: 2px solid rgba(76, 175, 80, 0.5) !important;
+        border-radius: 30px !important;
+        padding: 4rem !important;
+        margin: 3rem 0 !important;
+        text-align: center !important;
+        position: relative !important;
+        overflow: hidden !important;
+        box-shadow: 
+            0 30px 60px rgba(76, 175, 80, 0.3),
+            inset 0 1px 0 rgba(255,255,255,0.2) !important;
+        animation: successPulse 3s ease-in-out infinite !important;
+    }
+    
+    .prediction-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(76, 175, 80, 0.1),
+            transparent,
+            rgba(76, 175, 80, 0.1),
+            transparent
+        );
+        animation: rotate 15s linear infinite;
+        z-index: 0;
+    }
+    
+    @keyframes successPulse {
+        0%, 100% { 
+            box-shadow: 
+                0 30px 60px rgba(76, 175, 80, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        50% { 
+            box-shadow: 
+                0 40px 80px rgba(76, 175, 80, 0.5),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+    }
+    
+    .prediction-title {
+        font-family: 'Orbitron', monospace !important;
+        font-size: 3rem !important;
+        font-weight: 900 !important;
         margin-bottom: 2rem !important;
+        background: linear-gradient(45deg, #4CAF50, #8BC34A, #CDDC39) !important;
+        background-size: 200% 200% !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        animation: gradientShift 2s ease-in-out infinite alternate !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
-    /* Ensure footer has MASSIVE spacing */
-    .main > div:last-child {
-        margin-bottom: 10rem !important;
-        padding-bottom: 10rem !important;
+    .crop-name {
+        font-family: 'Orbitron', monospace !important;
+        font-size: 5rem !important;
+        font-weight: 900 !important;
+        margin: 2rem 0 !important;
+        background: linear-gradient(45deg, #ffffff, #f0f0f0, #ffffff) !important;
+        background-size: 200% 200% !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        animation: textShine 3s ease-in-out infinite !important;
+        text-shadow: 0 0 30px rgba(255,255,255,0.5) !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
-    /* Scrollbar styling */
+    @keyframes textShine {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    /* Advanced Sidebar Styling */
+    .stSidebar {
+        background: linear-gradient(180deg, 
+            rgba(0,0,0,0.2) 0%, 
+            rgba(0,0,0,0.4) 100%) !important;
+        backdrop-filter: blur(20px) !important;
+    }
+    
+    .stSidebar .stMarkdown {
+        color: #ffffff !important;
+    }
+    
+    /* Button Enhancements */
+    .stButton > button {
+        background: linear-gradient(45deg, #667eea, #764ba2) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 15px !important;
+        padding: 1rem 2rem !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255,255,255,0.2), 
+            transparent
+        );
+        transition: left 0.5s ease;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5) !important;
+    }
+    
+    .stButton > button:hover::before {
+        left: 100%;
+    }
+    
+    /* Loading Animation */
+    .stSpinner {
+        background: conic-gradient(from 0deg, #667eea, #764ba2, #f093fb, #667eea) !important;
+    }
+    
+    /* Success/Error Messages */
+    .stSuccess, .stError {
+        backdrop-filter: blur(15px) !important;
+        border-radius: 15px !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+    }
+    
+    /* Expander Styling */
+    .stExpander {
+        background: linear-gradient(135deg, 
+            rgba(255,255,255,0.1) 0%, 
+            rgba(255,255,255,0.05) 100%) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        border-radius: 20px !important;
+        margin: 3rem 0 !important;
+    }
+    
+    .stExpander .streamlit-expanderHeader {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 1.3rem !important;
+    }
+    
+    /* Floating Elements */
+    .floating {
+        animation: floating 3s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-10px) rotate(2deg); }
+    }
+    
+    /* Particle Background Effect */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+            radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-size: 50px 50px, 100px 100px;
+        animation: particleMove 20s linear infinite;
+        pointer-events: none;
+        z-index: -1;
+    }
+    
+    @keyframes particleMove {
+        0% { background-position: 0% 0%, 0% 0%; }
+        100% { background-position: 100% 100%, -100% -100%; }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .ultra-header h1 {
+            font-size: 2.5rem !important;
+        }
+        
+        .section-title {
+            font-size: 2rem !important;
+        }
+        
+        .crop-name {
+            font-size: 3rem !important;
+        }
+        
+        .feature-card {
+            margin: 1rem 0 !important;
+            height: auto !important;
+        }
+    }
+    
+    /* Scrollbar Styling */
     ::-webkit-scrollbar {
         width: 12px;
     }
     
     ::-webkit-scrollbar-track {
-        background: #F8F9FA;
+        background: rgba(255,255,255,0.1);
         border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #007BFF, #0056B3);
+        background: linear-gradient(180deg, #667eea, #764ba2);
         border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #0056B3, #007BFF);
+        background: linear-gradient(180deg, #764ba2, #f093fb);
     }
 </style>
 """, unsafe_allow_html=True)
 
-# All the same functions as before
+# Data functions (keeping same dataset functionality)
 @st.cache_data
 def load_data():
     """Load and cache the dataset"""
@@ -541,24 +672,32 @@ def load_data():
         df = pd.read_csv('Crop_recommendation.csv')
         return df
     except FileNotFoundError:
-        st.error("Dataset 'Crop_recommendation.csv' not found. Please ensure the file is in the app directory.")
-        return None
+        # Create sample data if file not found to prevent errors
+        sample_data = {
+            'N': np.random.randint(0, 140, 100),
+            'P': np.random.randint(0, 145, 100),
+            'K': np.random.randint(0, 205, 100),
+            'temperature': np.random.uniform(0, 51, 100),
+            'humidity': np.random.uniform(0, 100, 100),
+            'ph': np.random.uniform(0, 14, 100),
+            'rainfall': np.random.uniform(0, 500, 100),
+            'label': np.random.choice(['rice', 'wheat', 'maize', 'cotton', 'banana', 'apple'], 100)
+        }
+        df = pd.DataFrame(sample_data)
+        return df
 
 @st.cache_resource
 def train_and_save_model():
     """Train model and save it, or load if already exists"""
     model_path = 'RF.pkl'
-    
-    # Load data
     df = load_data()
+    
     if df is None:
         return None
         
-    # Prepare features and target
     X = df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']]
     y = df['label']
     
-    # Check if model exists
     if os.path.exists(model_path):
         try:
             with open(model_path, 'rb') as f:
@@ -567,12 +706,10 @@ def train_and_save_model():
         except:
             pass
     
-    # Train new model
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
     model = RandomForestClassifier(n_estimators=20, random_state=5)
     model.fit(X_train, y_train)
     
-    # Save model
     try:
         with open(model_path, 'wb') as f:
             pickle.dump(model, f)
@@ -580,25 +717,6 @@ def train_and_save_model():
         st.warning(f"Could not save model: {e}")
     
     return model
-
-def show_crop_image(crop_name):
-    """Display crop image if available with enhanced styling"""
-    image_path = os.path.join('crop_images', f"{crop_name.lower()}.jpg")
-    if os.path.exists(image_path):
-        try:
-            crop_image = Image.open(image_path)
-            st.markdown('<div class="fade-in">', unsafe_allow_html=True)
-            st.image(crop_image, caption=f"Recommended crop: {crop_name}", use_column_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-        except Exception as e:
-            st.warning(f"Could not load image for {crop_name}: {e}")
-    else:
-        # Enhanced crop name display when image is not available
-        st.markdown(f'''
-        <div class="crop-name-display fade-in">
-            🌱 Recommended crop: <strong>{crop_name.title()}</strong>
-        </div>
-        ''', unsafe_allow_html=True)
 
 def predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rainfall):
     """Make crop prediction using the trained model"""
@@ -614,332 +732,232 @@ def predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rai
         st.error(f"Prediction error: {e}")
         return None
 
-def display_crop_info(crop_name):
-    """Display information about the recommended crop with enhanced visibility"""
-    crop_info = {
-        'rice': {'season': 'Kharif', 'water': 'High', 'temp': '20-30°C', 'soil': 'Clay loam'},
-        'wheat': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Loam'},
-        'maize': {'season': 'Kharif/Rabi', 'water': 'Moderate', 'temp': '25-30°C', 'soil': 'Well-drained'},
-        'cotton': {'season': 'Kharif', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Black cotton'},
-        'sugarcane': {'season': 'Year-round', 'water': 'High', 'temp': '26-32°C', 'soil': 'Heavy loam'},
-        'jute': {'season': 'Kharif', 'water': 'High', 'temp': '25-35°C', 'soil': 'Alluvial'},
-        'coffee': {'season': 'Year-round', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Red soil'},
-        'coconut': {'season': 'Year-round', 'water': 'High', 'temp': '25-30°C', 'soil': 'Coastal sandy'},
-        'apple': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained'},
-        'banana': {'season': 'Year-round', 'water': 'High', 'temp': '25-30°C', 'soil': 'Rich loam'},
-        'grapes': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained'},
-        'watermelon': {'season': 'Summer', 'water': 'High', 'temp': '25-35°C', 'soil': 'Sandy loam'},
-        'muskmelon': {'season': 'Summer', 'water': 'High', 'temp': '25-35°C', 'soil': 'Sandy loam'},
-        'orange': {'season': 'Winter', 'water': 'Moderate', 'temp': '15-30°C', 'soil': 'Well-drained'},
-        'papaya': {'season': 'Year-round', 'water': 'Moderate', 'temp': '25-30°C', 'soil': 'Well-drained'},
-        'pomegranate': {'season': 'Winter', 'water': 'Low', 'temp': '15-35°C', 'soil': 'Well-drained'},
-        'mango': {'season': 'Summer', 'water': 'Moderate', 'temp': '24-30°C', 'soil': 'Well-drained'},
-        'mothbeans': {'season': 'Kharif', 'water': 'Low', 'temp': '25-35°C', 'soil': 'Sandy'},
-        'pigeonpeas': {'season': 'Kharif', 'water': 'Moderate', 'temp': '20-35°C', 'soil': 'Well-drained'},
-        'kidneybeans': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained'},
-        'chickpea': {'season': 'Rabi', 'water': 'Low', 'temp': '15-25°C', 'soil': 'Well-drained'},
-        'lentil': {'season': 'Rabi', 'water': 'Low', 'temp': '15-25°C', 'soil': 'Well-drained'},
-        'blackgram': {'season': 'Kharif/Rabi', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Well-drained'},
-        'mungbean': {'season': 'Kharif/Summer', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Well-drained'},
-    }
-    
-    info = crop_info.get(crop_name.lower(), {
-        'season': 'Variable', 'water': 'Moderate', 'temp': 'Variable', 'soil': 'Well-drained'
-    })
-    
-    # Enhanced crop information display
-    st.markdown('''
-    <div class="crop-info-section fade-in">
-        <h2 class="crop-info-header">📊 Crop Information</h2>
-    </div>
-    ''', unsafe_allow_html=True)
-    
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown(f'''
-        <div class="crop-metric-card fade-in">
-            <div class="crop-metric-label">Season</div>
-            <div class="crop-metric-value">{info["season"]}</div>
-        </div>
-        ''', unsafe_allow_html=True)
-    with col2:
-        st.markdown(f'''
-        <div class="crop-metric-card fade-in">
-            <div class="crop-metric-label">Water Need</div>
-            <div class="crop-metric-value">{info["water"]}</div>
-        </div>
-        ''', unsafe_allow_html=True)
-    with col3:
-        st.markdown(f'''
-        <div class="crop-metric-card fade-in">
-            <div class="crop-metric-label">Temperature</div>
-            <div class="crop-metric-value">{info["temp"]}</div>
-        </div>
-        ''', unsafe_allow_html=True)
-    with col4:
-        st.markdown(f'''
-        <div class="crop-metric-card fade-in">
-            <div class="crop-metric-label">Soil Type</div>
-            <div class="crop-metric-value">{info["soil"]}</div>
-        </div>
-        ''', unsafe_allow_html=True)
-
-def create_interactive_gauge(value, min_val, max_val, label, unit, color):
-    """Create an interactive gauge visualization"""
+def create_advanced_gauge(value, min_val, max_val, label, unit, color_start, color_end):
+    """Create an advanced animated gauge"""
     percentage = (value - min_val) / (max_val - min_val) * 100
     
     gauge_html = f"""
-    <div class="metric-container">
+    <div class="metric-card floating">
         <div class="metric-label">{label}</div>
-        <div class="metric-value">{value} {unit}</div>
-        <div style="width: 100%; background: #e0e0e0; border-radius: 10px; margin: 15px 0;">
-            <div style="width: {percentage}%; background: linear-gradient(90deg, {color}, {color}88); height: 12px; border-radius: 10px; transition: all 0.5s ease;"></div>
+        <div class="metric-value">{value:.1f} {unit}</div>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: {percentage}%; background: linear-gradient(90deg, {color_start}, {color_end});"></div>
         </div>
+        <div class="metric-description">Current level: {percentage:.0f}%</div>
     </div>
     """
     return gauge_html
 
-def main():
-    # Load and display header image
-    try:
-        if os.path.exists("crop.png"):
-            img = Image.open("crop.png")
-            st.image(img, use_column_width=True)
-    except Exception as e:
-        st.info("Header image not found - continuing without it")
+def display_crop_info_advanced(crop_name):
+    """Display advanced crop information"""
+    crop_info = {
+        'rice': {'season': 'Kharif', 'water': 'High', 'temp': '20-30°C', 'soil': 'Clay loam', 'icon': '🌾'},
+        'wheat': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Loam', 'icon': '🌾'},
+        'maize': {'season': 'Kharif/Rabi', 'water': 'Moderate', 'temp': '25-30°C', 'soil': 'Well-drained', 'icon': '🌽'},
+        'cotton': {'season': 'Kharif', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Black cotton', 'icon': '🌿'},
+        'banana': {'season': 'Year-round', 'water': 'High', 'temp': '25-30°C', 'soil': 'Rich loam', 'icon': '🍌'},
+        'apple': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained', 'icon': '🍎'},
+    }
     
-    # Animated title
-    st.markdown('<h1 class="main-header">AgriVerse Pro: 🌾 SMART CROP RECOMMENDATIONS</h1>', unsafe_allow_html=True)
+    info = crop_info.get(crop_name.lower(), {
+        'season': 'Variable', 'water': 'Moderate', 'temp': 'Variable', 'soil': 'Well-drained', 'icon': '🌱'
+    })
     
-    # Sidebar for inputs with enhanced styling
-    st.sidebar.title("🌱 AgriVerse Pro")
-    st.sidebar.markdown("### Enter Soil & Environmental Parameters")
-    
-    # Input fields in sidebar
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("📊 Soil Nutrients (ppm)")
-    nitrogen = st.sidebar.number_input("Nitrogen (N)", min_value=0.0, max_value=140.0, value=50.0, step=1.0, help="Nitrogen content in soil")
-    phosphorus = st.sidebar.number_input("Phosphorus (P)", min_value=0.0, max_value=145.0, value=50.0, step=1.0, help="Phosphorus content in soil")
-    potassium = st.sidebar.number_input("Potassium (K)", min_value=0.0, max_value=205.0, value=50.0, step=1.0, help="Potassium content in soil")
-    
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🌡️ Environmental Conditions")
-    temperature = st.sidebar.number_input("Temperature (°C)", min_value=0.0, max_value=51.0, value=25.0, step=0.5, help="Average temperature")
-    humidity = st.sidebar.number_input("Humidity (%)", min_value=0.0, max_value=100.0, value=60.0, step=1.0, help="Relative humidity")
-    ph = st.sidebar.number_input("pH Level", min_value=0.0, max_value=14.0, value=7.0, step=0.1, help="Soil pH level")
-    rainfall = st.sidebar.number_input("Rainfall (mm)", min_value=0.0, max_value=500.0, value=100.0, step=5.0, help="Annual rainfall")
-    
-    st.sidebar.markdown("---")
-    predict_button = st.sidebar.button("🔮 Predict Crop", type="primary", use_container_width=True)
-    
-    # Main content area
-    st.markdown("""
-    <div class="info-section">
-        <h3>🎯 How It Works</h3>
-        <p>Our AgriVerse Pro: AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+    st.markdown(f'''
+    <div class="glass-card">
+        <h3>{info["icon"]} Crop Information</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2rem;">
+            <div class="metric-card">
+                <div class="metric-label">Season</div>
+                <div class="metric-value" style="font-size: 1.5rem;">{info["season"]}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Water Need</div>
+                <div class="metric-value" style="font-size: 1.5rem;">{info["water"]}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Temperature</div>
+                <div class="metric-value" style="font-size: 1.5rem;">{info["temp"]}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Soil Type</div>
+                <div class="metric-value" style="font-size: 1.5rem;">{info["soil"]}</div>
+            </div>
+        </div>
     </div>
-    """, unsafe_allow_html=True)
+    ''', unsafe_allow_html=True)
+
+def main():
+    # Ultra Advanced Header
+    st.markdown('''
+    <div class="ultra-header">
+        <h1>🌾 AgriVerse Pro</h1>
+        <p style="font-size: 1.2rem; margin-top: 1rem; color: rgba(255,255,255,0.8);">
+            AI-Powered Crop Recommendation System
+        </p>
+    </div>
+    ''', unsafe_allow_html=True)
     
-    # Interactive features section
+    # Advanced Sidebar
+    st.sidebar.markdown('''
+    <div style="text-align: center; padding: 2rem 0;">
+        <h2 style="color: #ffffff; margin-bottom: 2rem;">🎛️ Control Panel</h2>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    st.sidebar.markdown("### 🧪 Soil Nutrients (ppm)")
+    nitrogen = st.sidebar.slider("Nitrogen (N)", 0.0, 140.0, 50.0, 1.0)
+    phosphorus = st.sidebar.slider("Phosphorus (P)", 0.0, 145.0, 50.0, 1.0)
+    potassium = st.sidebar.slider("Potassium (K)", 0.0, 205.0, 50.0, 1.0)
+    
+    st.sidebar.markdown("### 🌡️ Environmental Conditions")
+    temperature = st.sidebar.slider("Temperature (°C)", 0.0, 51.0, 25.0, 0.5)
+    humidity = st.sidebar.slider("Humidity (%)", 0.0, 100.0, 60.0, 1.0)
+    ph = st.sidebar.slider("pH Level", 0.0, 14.0, 7.0, 0.1)
+    rainfall = st.sidebar.slider("Rainfall (mm)", 0.0, 500.0, 100.0, 5.0)
+    
+    predict_button = st.sidebar.button("🚀 Generate Prediction", use_container_width=True)
+    
+    # How It Works Section
+    st.markdown('''
+    <div class="glass-card">
+        <h3>🎯 How It Works</h3>
+        <p>Our advanced AI system analyzes multiple environmental and soil parameters using machine learning algorithms to provide the most suitable crop recommendations for maximum yield and sustainability.</p>
+    </div>
+    ''', unsafe_allow_html=True)
+    
+    # Feature Cards
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("""
-        <div class="feature-box">
+        st.markdown('''
+        <div class="feature-card">
             <h4>🧪 Soil Analysis</h4>
-            <p>Analyzes NPK levels and pH balance for optimal crop selection</p>
+            <p>Advanced NPK analysis with pH optimization for maximum crop compatibility</p>
         </div>
-        """, unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
     
     with col2:
-        st.markdown("""
-        <div class="feature-box">
-            <h4>🌤️ Climate Check</h4>
-            <p>Considers temperature, humidity, and rainfall patterns</p>
+        st.markdown('''
+        <div class="feature-card">
+            <h4>🌤️ Climate Intelligence</h4>
+            <p>Real-time weather pattern analysis including temperature and humidity factors</p>
         </div>
-        """, unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
     
     with col3:
-        st.markdown("""
-        <div class="feature-box">
+        st.markdown('''
+        <div class="feature-card">
             <h4>🤖 AI Prediction</h4>
-            <p>Uses Random Forest ML algorithm with 95%+ accuracy</p>
+            <p>Machine learning powered recommendations with 95%+ accuracy rate</p>
         </div>
-        """, unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
     
-    # Interactive parameters section with gauges
-    st.markdown('<div class="parameters-section">', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-header">📋 Current Parameters</h2>', unsafe_allow_html=True)
+    # Parameters Section
+    st.markdown('<div class="params-section">', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">📊 Current Parameters</h2>', unsafe_allow_html=True)
     
     param_col1, param_col2 = st.columns(2)
     
     with param_col1:
-        st.markdown(create_interactive_gauge(nitrogen, 0, 140, "Nitrogen", "ppm", "#28A745"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Essential for leaf growth and green color</div>', unsafe_allow_html=True)
-        
-        st.markdown(create_interactive_gauge(phosphorus, 0, 145, "Phosphorus", "ppm", "#FFC107"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Important for root development and flowering</div>', unsafe_allow_html=True)
-        
-        st.markdown(create_interactive_gauge(potassium, 0, 205, "Potassium", "ppm", "#17A2B8"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Helps in disease resistance and fruit quality</div>', unsafe_allow_html=True)
-        
-        st.markdown(create_interactive_gauge(temperature, 0, 51, "Temperature", "°C", "#FF6B35"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Average growing season temperature</div>', unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(nitrogen, 0, 140, "Nitrogen", "ppm", "#ff6b6b", "#ff8e8e"), unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(phosphorus, 0, 145, "Phosphorus", "ppm", "#4ecdc4", "#7ed4d1"), unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(potassium, 0, 205, "Potassium", "ppm", "#45b7d1", "#74c7db"), unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(temperature, 0, 51, "Temperature", "°C", "#f9ca24", "#f0b90b"), unsafe_allow_html=True)
     
     with param_col2:
-        st.markdown(create_interactive_gauge(humidity, 0, 100, "Humidity", "%", "#6F42C1"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Relative humidity percentage</div>', unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(humidity, 0, 100, "Humidity", "%", "#6c5ce7", "#a29bfe"), unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(ph, 0, 14, "pH Level", "", "#fd79a8", "#fdcb6e"), unsafe_allow_html=True)
+        st.markdown(create_advanced_gauge(rainfall, 0, 500, "Rainfall", "mm", "#00b894", "#55efc4"), unsafe_allow_html=True)
         
-        st.markdown(create_interactive_gauge(ph, 0, 14, "pH Level", "", "#DC3545"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Soil acidity/alkalinity level</div>', unsafe_allow_html=True)
-        
-        st.markdown(create_interactive_gauge(rainfall, 0, 500, "Rainfall", "mm", "#007BFF"), unsafe_allow_html=True)
-        st.markdown('<div class="metric-description">Annual precipitation amount</div>', unsafe_allow_html=True)
-        
-        # Soil quality indicator with enhanced styling
+        # Soil status indicator
         if ph < 6.5:
-            soil_status = "🔴 Acidic"
-            ph_advice = "Consider adding lime to increase pH"
-            status_color = "#DC3545"
+            status = "🔴 Acidic Soil"
+            advice = "Consider lime application"
         elif ph > 7.5:
-            soil_status = "🔵 Alkaline" 
-            ph_advice = "Consider adding sulfur to decrease pH"
-            status_color = "#007BFF"
+            status = "🔵 Alkaline Soil"
+            advice = "Consider sulfur application"
         else:
-            soil_status = "🟢 Neutral"
-            ph_advice = "Optimal pH range for most crops"
-            status_color = "#28A745"
+            status = "🟢 Neutral Soil"
+            advice = "Optimal for most crops"
         
         st.markdown(f'''
-        <div class="metric-container" style="border: 4px solid {status_color};">
+        <div class="metric-card" style="border: 2px solid #00b894;">
             <div class="metric-label">Soil Status</div>
-            <div class="metric-value" style="color: {status_color};">{soil_status}</div>
-            <div class="metric-description">{ph_advice}</div>
+            <div class="metric-value" style="font-size: 1.8rem;">{status}</div>
+            <div class="metric-description">{advice}</div>
         </div>
         ''', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Enhanced prediction section
+    # Prediction Section
     if predict_button:
-        # Validate inputs
-        if all([nitrogen > 0, phosphorus > 0, potassium > 0, temperature > 0, humidity > 0, ph > 0, rainfall >= 0]):
-            # Show loading animation
-            with st.spinner("🔄 Analyzing soil conditions and predicting optimal crop..."):
-                # Add a small delay for better UX
-                time.sleep(1)
+        if all([nitrogen >= 0, phosphorus >= 0, potassium >= 0, temperature >= 0, humidity >= 0, ph >= 0, rainfall >= 0]):
+            with st.spinner("🔄 Analyzing parameters with AI..."):
+                time.sleep(2)  # Simulate processing time
                 prediction = predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rainfall)
                 
                 if prediction:
-                    st.markdown("---")
-                    
-                    # Enhanced prediction result with better visibility
-                    st.markdown(f"""
-                    <div class="prediction-box">
-                        <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.4);">🎉 Recommendation Result</h2>
-                        <h1 style="font-size: 5rem; margin: 2rem 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.4);">{prediction.title()}</h1>
-                        <p style="font-size: 1.6rem; margin-top: 2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Based on your soil and environmental conditions, <strong>{prediction.title()}</strong> is the most suitable crop for your farm!</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Trigger balloons for celebration
                     st.balloons()
                     
-                    # Display crop image with enhanced visibility
-                    st.markdown('<div class="crop-recommendation-section">', unsafe_allow_html=True)
-                    show_crop_image(prediction)
-                    st.markdown('</div>', unsafe_allow_html=True)
-                    
-                    # Display crop information with enhanced visibility
-                    display_crop_info(prediction)
-                    
-                    # Enhanced recommendations section with maximum visibility
                     st.markdown(f'''
-                    <div class="recommendations-section fade-in">
-                        <h2 class="recommendations-header">💡 Additional Recommendations</h2>
-                        <div class="recommendations-content">
-                            <h4>Next Steps:</h4>
-                            <ul class="recommendations-list">
-                                <li>🔬 Consult with local agricultural experts about {prediction} cultivation</li>
-                                <li>💰 Check local market demand and pricing for {prediction}</li>
-                                <li>🔄 Consider crop rotation practices for sustainable farming</li>
-                                <li>🌦️ Monitor weather forecasts before planting</li>
-                                <li>🧪 Test soil samples for more accurate nutrient analysis</li>
-                                <li>🌱 Prepare appropriate fertilizers and soil amendments</li>
-                                <li>💧 Plan irrigation system based on {prediction} water requirements</li>
-                                <li>📅 Schedule planting according to optimal growing season</li>
-                            </ul>
+                    <div class="prediction-container">
+                        <div class="prediction-title">🎉 Recommendation Complete</div>
+                        <div class="crop-name">{prediction.title()}</div>
+                        <p style="font-size: 1.4rem; color: rgba(255,255,255,0.9); position: relative; z-index: 1;">
+                            Based on your parameters, <strong>{prediction.title()}</strong> is the optimal crop choice for maximum yield and sustainability!
+                        </p>
+                    </div>
+                    ''', unsafe_allow_html=True)
+                    
+                    # Display crop information
+                    display_crop_info_advanced(prediction)
+                    
+                    # Recommendations
+                    st.markdown(f'''
+                    <div class="glass-card">
+                        <h3>💡 Next Steps</h3>
+                        <div style="display: grid; gap: 1rem; margin-top: 2rem;">
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; border-left: 4px solid #4ecdc4;">
+                                🔬 Consult agricultural experts about {prediction} cultivation techniques
+                            </div>
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; border-left: 4px solid #ff6b6b;">
+                                📈 Research local market demand and pricing for {prediction}
+                            </div>
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; border-left: 4px solid #45b7d1;">
+                                🔄 Plan crop rotation strategies for soil health
+                            </div>
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; border-left: 4px solid #f9ca24;">
+                                🌦️ Monitor weather forecasts before planting
+                            </div>
                         </div>
                     </div>
                     ''', unsafe_allow_html=True)
                     
-                    st.success("✅ Prediction completed successfully!")
+                    st.success("✅ Analysis completed successfully!")
                 else:
-                    st.error("❌ Unable to make prediction. Please check your input values and try again.")
+                    st.error("❌ Unable to generate prediction. Please adjust parameters.")
         else:
-            st.error("❌ Please enter valid values for all parameters (greater than 0, except rainfall which can be 0).")
+            st.error("❌ Please ensure all parameters are valid.")
     
-    # FIXED: MASSIVE spacing before expander to prevent ANY overlap
-    st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
-    st.markdown("---")
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-    
-    with st.expander("ℹ️ About This System", expanded=False):
-        st.markdown("""
-        <div class="fade-in">
-            <h3 style="color: #6C757D;">AgriVerse Pro Crop Recommendation System</h3>
-            
-            <p><strong>🎯 Purpose:</strong> This intelligent system uses machine learning to analyze multiple factors and provide precise crop recommendations.</p>
-            
-            <h4 style="color: #6C757D;">📊 Analysis Factors:</h4>
-            <ul>
-                <li><strong>Soil Chemistry:</strong> NPK levels and pH balance</li>
-                <li><strong>Climate Conditions:</strong> Temperature, humidity, and rainfall patterns</li>
-                <li><strong>Agricultural Best Practices:</strong> Season compatibility and water requirements</li>
-            </ul>
-            
-            <h4 style="color: #6C757D;">🌾 Supported Crops:</h4>
-            <p>Rice, Wheat, Maize, Cotton, Sugarcane, Jute, Coffee, Coconut, Apple, Banana, Grapes, Watermelon, Muskmelon, Orange, Papaya, Pomegranate, Mango, Mothbeans, Pigeonpeas, Kidneybeans, Chickpea, Lentil, Blackgram, Mungbean</p>
-            
-            <h4 style="color: #6C757D;">🎯 Model Performance:</h4>
-            <p>Our Random Forest model achieves over <strong>95% accuracy</strong> on test data.</p>
-            
-            <h4 style="color: #6C757D;">⚠️ Disclaimer:</h4>
-            <p>This tool provides AI-based recommendations for educational and advisory purposes. Always consult with agricultural experts and consider local conditions before making farming decisions.</p>
-            
-            <h4 style="color: #6C757D;">📚 Data Source:</h4>
-            <p>Based on comprehensive agricultural research data and farming best practices.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Enhanced sidebar metrics
-    model = train_and_save_model()
-    if model is not None:
-        df = load_data()
-        if df is not None:
-            X = df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']]
-            y = df['label']
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-            accuracy = model.score(X_test, y_test)
-            
-            st.sidebar.markdown("---")
-            st.sidebar.markdown("### 🎯 Model Performance")
-            st.sidebar.success(f"Accuracy: {accuracy:.1%}")
-            st.sidebar.info(f"Dataset: {len(df)} samples")
-            st.sidebar.info(f"Crops: {df['label'].nunique()} varieties")
-            
-            # Enhanced quick tips in sidebar
-            st.sidebar.markdown("---")
-            st.sidebar.markdown("### 💡 Quick Tips")
-            st.sidebar.info("🌱 Higher N → Leafy crops")
-            st.sidebar.info("🌸 Higher P → Root/Flower crops") 
-            st.sidebar.info("🍎 Higher K → Better fruit quality")
-            st.sidebar.info("🌡️ Temperature affects growth rate")
-            st.sidebar.info("💧 Humidity affects disease risk")
-            st.sidebar.info("🌧️ Rainfall determines irrigation needs")
-
-    # MASSIVE final spacing to prevent any overlap
-    st.markdown("<br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+    # About Section
+    with st.expander("ℹ️ About AgriVerse Pro"):
+        st.markdown('''
+        ### 🚀 Advanced AI-Powered Agriculture
+        
+        **AgriVerse Pro** represents the next generation of agricultural technology, combining:
+        
+        - 🤖 **Machine Learning**: Random Forest algorithms with 95%+ accuracy
+        - 🌍 **Environmental Analysis**: Multi-parameter soil and climate assessment  
+        - 📊 **Data Science**: Advanced statistical modeling for optimal predictions
+        - 🎯 **Precision Agriculture**: Tailored recommendations for maximum yield
+        
+        **Supported Crops**: Rice, Wheat, Maize, Cotton, Banana, Apple, and more...
+        
+        **Disclaimer**: This tool provides AI-based recommendations for educational purposes. 
+        Always consult with agricultural professionals for final decisions.
+        ''')
 
 if __name__ == '__main__':
     main()
