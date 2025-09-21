@@ -20,7 +20,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
+# Enhanced Custom CSS for better styling and visibility
 st.markdown("""
 <style>
     .main-header {
@@ -29,6 +29,7 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        font-weight: bold;
     }
     .metric-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -37,6 +38,7 @@ st.markdown("""
         color: white;
         text-align: center;
         margin: 0.5rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .prediction-box {
         background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
@@ -45,14 +47,51 @@ st.markdown("""
         color: white;
         text-align: center;
         margin: 1rem 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     .info-section {
-        background: #f0f8ff;
+        background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        border-left: 8px solid #2E8B57;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .info-section h3 {
+        color: #2E8B57;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+        text-align: center;
+    }
+    .info-section p {
+        color: #333;
+        font-size: 1.1rem;
+        text-align: justify;
+        margin: 0;
+        font-weight: 500;
+    }
+    .feature-box {
+        background: #ffffff;
         padding: 1.5rem;
         border-radius: 10px;
-        border-left: 5px solid #2E8B57;
+        border: 2px solid #2E8B57;
         margin: 1rem 0;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .feature-box h4 {
+        color: #2E8B57;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    .stMetric {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -140,6 +179,25 @@ def display_crop_info(crop_name):
         'maize': {'season': 'Kharif/Rabi', 'water': 'Moderate', 'temp': '25-30°C', 'soil': 'Well-drained'},
         'cotton': {'season': 'Kharif', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Black cotton'},
         'sugarcane': {'season': 'Year-round', 'water': 'High', 'temp': '26-32°C', 'soil': 'Heavy loam'},
+        'jute': {'season': 'Kharif', 'water': 'High', 'temp': '25-35°C', 'soil': 'Alluvial'},
+        'coffee': {'season': 'Year-round', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Red soil'},
+        'coconut': {'season': 'Year-round', 'water': 'High', 'temp': '25-30°C', 'soil': 'Coastal sandy'},
+        'apple': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained'},
+        'banana': {'season': 'Year-round', 'water': 'High', 'temp': '25-30°C', 'soil': 'Rich loam'},
+        'grapes': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained'},
+        'watermelon': {'season': 'Summer', 'water': 'High', 'temp': '25-35°C', 'soil': 'Sandy loam'},
+        'muskmelon': {'season': 'Summer', 'water': 'High', 'temp': '25-35°C', 'soil': 'Sandy loam'},
+        'orange': {'season': 'Winter', 'water': 'Moderate', 'temp': '15-30°C', 'soil': 'Well-drained'},
+        'papaya': {'season': 'Year-round', 'water': 'Moderate', 'temp': '25-30°C', 'soil': 'Well-drained'},
+        'pomegranate': {'season': 'Winter', 'water': 'Low', 'temp': '15-35°C', 'soil': 'Well-drained'},
+        'mango': {'season': 'Summer', 'water': 'Moderate', 'temp': '24-30°C', 'soil': 'Well-drained'},
+        'mothbeans': {'season': 'Kharif', 'water': 'Low', 'temp': '25-35°C', 'soil': 'Sandy'},
+        'pigeonpeas': {'season': 'Kharif', 'water': 'Moderate', 'temp': '20-35°C', 'soil': 'Well-drained'},
+        'kidneybeans': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Well-drained'},
+        'chickpea': {'season': 'Rabi', 'water': 'Low', 'temp': '15-25°C', 'soil': 'Well-drained'},
+        'lentil': {'season': 'Rabi', 'water': 'Low', 'temp': '15-25°C', 'soil': 'Well-drained'},
+        'blackgram': {'season': 'Kharif/Rabi', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Well-drained'},
+        'mungbean': {'season': 'Kharif/Summer', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Well-drained'},
     }
     
     info = crop_info.get(crop_name.lower(), {
@@ -172,60 +230,86 @@ def main():
     st.sidebar.title("🌱 AgriSens")
     st.sidebar.markdown("### Enter Soil & Environmental Parameters")
     
-    # Create two columns for layout
-    col1, col2 = st.columns([1, 2])
+    # Input fields in sidebar
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("📊 Soil Nutrients (ppm)")
+    nitrogen = st.sidebar.number_input("Nitrogen (N)", min_value=0.0, max_value=140.0, value=50.0, step=1.0, help="Nitrogen content in soil")
+    phosphorus = st.sidebar.number_input("Phosphorus (P)", min_value=0.0, max_value=145.0, value=50.0, step=1.0, help="Phosphorus content in soil")
+    potassium = st.sidebar.number_input("Potassium (K)", min_value=0.0, max_value=205.0, value=50.0, step=1.0, help="Potassium content in soil")
+    
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🌡️ Environmental Conditions")
+    temperature = st.sidebar.number_input("Temperature (°C)", min_value=0.0, max_value=51.0, value=25.0, step=0.5, help="Average temperature")
+    humidity = st.sidebar.number_input("Humidity (%)", min_value=0.0, max_value=100.0, value=60.0, step=1.0, help="Relative humidity")
+    ph = st.sidebar.number_input("pH Level", min_value=0.0, max_value=14.0, value=7.0, step=0.1, help="Soil pH level")
+    rainfall = st.sidebar.number_input("Rainfall (mm)", min_value=0.0, max_value=500.0, value=100.0, step=5.0, help="Annual rainfall")
+    
+    st.sidebar.markdown("---")
+    predict_button = st.sidebar.button("🔮 Predict Crop", type="primary", use_container_width=True)
+    
+    # Main content area - Enhanced "How It Works" section
+    st.markdown("""
+    <div class="info-section">
+        <h3>🎯 How It Works</h3>
+        <p>Our AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. 
+        Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Features section
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.sidebar.markdown("---")
-        st.sidebar.subheader("📊 Soil Nutrients (ppm)")
-        nitrogen = st.sidebar.number_input("Nitrogen (N)", min_value=0.0, max_value=140.0, value=50.0, step=1.0, help="Nitrogen content in soil")
-        phosphorus = st.sidebar.number_input("Phosphorus (P)", min_value=0.0, max_value=145.0, value=50.0, step=1.0, help="Phosphorus content in soil")
-        potassium = st.sidebar.number_input("Potassium (K)", min_value=0.0, max_value=205.0, value=50.0, step=1.0, help="Potassium content in soil")
-        
-        st.sidebar.markdown("---")
-        st.sidebar.subheader("🌡️ Environmental Conditions")
-        temperature = st.sidebar.number_input("Temperature (°C)", min_value=0.0, max_value=51.0, value=25.0, step=0.5, help="Average temperature")
-        humidity = st.sidebar.number_input("Humidity (%)", min_value=0.0, max_value=100.0, value=60.0, step=1.0, help="Relative humidity")
-        ph = st.sidebar.number_input("pH Level", min_value=0.0, max_value=14.0, value=7.0, step=0.1, help="Soil pH level")
-        rainfall = st.sidebar.number_input("Rainfall (mm)", min_value=0.0, max_value=500.0, value=100.0, step=5.0, help="Annual rainfall")
-        
-        st.sidebar.markdown("---")
-        predict_button = st.sidebar.button("🔮 Predict Crop", type="primary", use_container_width=True)
-    
-    # Main content area
-    with col2:
-        # Information section
         st.markdown("""
-        <div class="info-section">
-            <h3>🎯 How It Works</h3>
-            <p>Our AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. 
-            Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+        <div class="feature-box">
+            <h4>🧪 Soil Analysis</h4>
+            <p>Analyzes NPK levels and pH balance for optimal crop selection</p>
         </div>
         """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-box">
+            <h4>🌤️ Climate Check</h4>
+            <p>Considers temperature, humidity, and rainfall patterns</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="feature-box">
+            <h4>🤖 AI Prediction</h4>
+            <p>Uses Random Forest ML algorithm with 95%+ accuracy</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Display current parameters
+    st.subheader("📋 Current Parameters")
+    param_col1, param_col2 = st.columns(2)
+    
+    with param_col1:
+        st.metric("Nitrogen", f"{nitrogen} ppm", help="Essential for leaf growth and green color")
+        st.metric("Phosphorus", f"{phosphorus} ppm", help="Important for root development and flowering")
+        st.metric("Potassium", f"{potassium} ppm", help="Helps in disease resistance and fruit quality")
+        st.metric("Temperature", f"{temperature} °C", help="Average growing season temperature")
+    
+    with param_col2:
+        st.metric("Humidity", f"{humidity} %", help="Relative humidity percentage")
+        st.metric("pH Level", f"{ph}", help="Soil acidity/alkalinity level")
+        st.metric("Rainfall", f"{rainfall} mm", help="Annual precipitation amount")
         
-        # Display current parameters
-        st.subheader("📋 Current Parameters")
-        param_col1, param_col2 = st.columns(2)
+        # Soil quality indicator
+        if ph < 6.5:
+            soil_status = "🔴 Acidic"
+            ph_advice = "Consider adding lime to increase pH"
+        elif ph > 7.5:
+            soil_status = "🔵 Alkaline"
+            ph_advice = "Consider adding sulfur to decrease pH"
+        else:
+            soil_status = "🟢 Neutral"
+            ph_advice = "Optimal pH range for most crops"
         
-        with param_col1:
-            st.metric("Nitrogen", f"{nitrogen} ppm")
-            st.metric("Phosphorus", f"{phosphorus} ppm")
-            st.metric("Potassium", f"{potassium} ppm")
-            st.metric("Temperature", f"{temperature} °C")
-        
-        with param_col2:
-            st.metric("Humidity", f"{humidity} %")
-            st.metric("pH Level", f"{ph}")
-            st.metric("Rainfall", f"{rainfall} mm")
-            
-            # Soil quality indicator
-            if ph < 6.5:
-                soil_status = "🔴 Acidic"
-            elif ph > 7.5:
-                soil_status = "🔵 Alkaline"
-            else:
-                soil_status = "🟢 Neutral"
-            st.metric("Soil Status", soil_status)
+        st.metric("Soil Status", soil_status, help=ph_advice)
     
     # Prediction section
     if predict_button:
@@ -262,6 +346,7 @@ def main():
                     - Check local market demand and pricing for {prediction}
                     - Consider crop rotation practices for sustainable farming
                     - Monitor weather forecasts before planting
+                    - Test soil samples for more accurate nutrient analysis
                     """)
                     
                     st.success("✅ Prediction completed successfully!")
@@ -280,6 +365,10 @@ def main():
         - **Soil Chemistry**: NPK levels and pH balance
         - **Climate Conditions**: Temperature, humidity, and rainfall patterns
         - **Agricultural Best Practices**: Season compatibility and water requirements
+        
+        **Supported Crops**: Rice, Wheat, Maize, Cotton, Sugarcane, Jute, Coffee, Coconut, Apple, Banana, 
+        Grapes, Watermelon, Muskmelon, Orange, Papaya, Pomegranate, Mango, Mothbeans, Pigeonpeas, 
+        Kidneybeans, Chickpea, Lentil, Blackgram, Mungbean
         
         **Model Performance**: Our Random Forest model achieves over 95% accuracy on test data.
         
@@ -304,6 +393,15 @@ def main():
             st.sidebar.success(f"Accuracy: {accuracy:.1%}")
             st.sidebar.info(f"Dataset: {len(df)} samples")
             st.sidebar.info(f"Crops: {df['label'].nunique()} varieties")
+            
+            # Quick tips in sidebar
+            st.sidebar.markdown("---")
+            st.sidebar.markdown("### 💡 Quick Tips")
+            st.sidebar.info("🌱 Higher N = Leafy crops")
+            st.sidebar.info("🌸 Higher P = Root/Flower crops") 
+            st.sidebar.info("🍎 Higher K = Fruit quality")
+            st.sidebar.info("🌡️ Temperature affects growth rate")
+            st.sidebar.info("💧 Humidity affects disease risk")
 
 if __name__ == '__main__':
     main()
