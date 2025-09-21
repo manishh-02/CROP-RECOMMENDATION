@@ -1,4 +1,4 @@
-# app.py - Enhanced Interactive Crop Recommendation System
+# app.py - Enhanced Interactive Crop Recommendation System with Fixed Visibility
 
 import streamlit as st
 import numpy as np
@@ -15,19 +15,19 @@ warnings.filterwarnings('ignore')
 
 # Set page configuration
 st.set_page_config(
-    page_title="AgriSens - Smart Crop Recommendation",
+    page_title="AgriVerse Pro: Smart Crop Recommendation",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Enhanced Interactive CSS with animations and effects
+# Enhanced Interactive CSS with fixed visibility for prediction results
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
     
     * {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Poppins', sans-serif !important;
     }
     
     .main-header {
@@ -163,6 +163,151 @@ st.markdown("""
         overflow: hidden !important;
     }
     
+    /* FIXED PREDICTION RESULT SECTIONS */
+    .crop-recommendation-section {
+        background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%) !important;
+        padding: 3rem !important;
+        border-radius: 25px !important;
+        border: 4px solid #2E8B57 !important;
+        margin: 3rem 0 !important;
+        box-shadow: 0 15px 40px rgba(46, 139, 87, 0.2) !important;
+        position: relative !important;
+        z-index: 100 !important;
+    }
+    
+    .crop-name-display {
+        background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%) !important;
+        color: white !important;
+        padding: 2rem !important;
+        border-radius: 20px !important;
+        text-align: center !important;
+        margin: 2rem 0 !important;
+        box-shadow: 0 8px 25px rgba(46, 139, 87, 0.3) !important;
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
+        animation: pulse-glow 2s infinite;
+    }
+    
+    @keyframes pulse-glow {
+        0%, 100% { 
+            box-shadow: 0 8px 25px rgba(46, 139, 87, 0.3);
+            transform: scale(1); 
+        }
+        50% { 
+            box-shadow: 0 12px 35px rgba(46, 139, 87, 0.5), 0 0 30px rgba(46, 139, 87, 0.3);
+            transform: scale(1.02); 
+        }
+    }
+    
+    .crop-info-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+        padding: 3rem !important;
+        border-radius: 20px !important;
+        border: 3px solid #2E8B57 !important;
+        margin: 2rem 0 !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+    
+    .crop-info-header {
+        color: #2E8B57 !important;
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 2rem !important;
+        text-align: center !important;
+        border-bottom: 3px solid #2E8B57 !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    .crop-metric-card {
+        background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%) !important;
+        color: white !important;
+        padding: 2rem !important;
+        border-radius: 15px !important;
+        text-align: center !important;
+        margin: 1rem !important;
+        box-shadow: 0 8px 20px rgba(46, 139, 87, 0.3) !important;
+        transition: all 0.3s ease !important;
+        border: 2px solid transparent !important;
+    }
+    
+    .crop-metric-card:hover {
+        transform: translateY(-5px) scale(1.05) !important;
+        box-shadow: 0 12px 30px rgba(46, 139, 87, 0.4) !important;
+        border-color: #FFD700 !important;
+    }
+    
+    .crop-metric-label {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+        opacity: 0.9 !important;
+    }
+    
+    .crop-metric-value {
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
+    }
+    
+    .recommendations-section {
+        background: linear-gradient(135deg, #fff8e1 0%, #fffbf0 100%) !important;
+        padding: 3rem !important;
+        border-radius: 20px !important;
+        border: 3px solid #FF8C00 !important;
+        margin: 2rem 0 !important;
+        box-shadow: 0 10px 30px rgba(255, 140, 0, 0.15) !important;
+    }
+    
+    .recommendations-header {
+        color: #FF8C00 !important;
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 2rem !important;
+        text-align: center !important;
+        border-bottom: 3px solid #FF8C00 !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    .recommendations-content {
+        background: white !important;
+        padding: 2.5rem !important;
+        border-radius: 15px !important;
+        border: 2px solid #FF8C00 !important;
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.1) !important;
+    }
+    
+    .recommendations-content h4 {
+        color: #FF8C00 !important;
+        font-size: 1.6rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .recommendations-list {
+        list-style: none !important;
+        padding: 0 !important;
+    }
+    
+    .recommendations-list li {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+        margin: 1rem 0 !important;
+        padding: 1.5rem !important;
+        border-radius: 10px !important;
+        border-left: 5px solid #FF8C00 !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05) !important;
+        font-size: 1.1rem !important;
+        font-weight: 500 !important;
+        color: #333 !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .recommendations-list li:hover {
+        transform: translateX(10px) !important;
+        box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2) !important;
+        border-left-width: 8px !important;
+    }
+    
     .section-header {
         color: #2E8B57 !important;
         font-size: 2.2rem !important;
@@ -278,44 +423,6 @@ st.markdown("""
         animation: shine 2s infinite;
     }
     
-    .interactive-button {
-        background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 1rem 2rem !important;
-        border-radius: 50px !important;
-        font-size: 1.1rem !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(46, 139, 87, 0.3) !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .interactive-button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(46, 139, 87, 0.4) !important;
-    }
-    
-    .interactive-button:active {
-        transform: translateY(0) !important;
-    }
-    
-    .loading-animation {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255,255,255,.3);
-        border-radius: 50%;
-        border-top-color: #fff;
-        animation: spin 1s ease-in-out infinite;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    
     .fade-in {
         animation: fadeIn 0.8s ease-out;
     }
@@ -325,17 +432,10 @@ st.markdown("""
         to { opacity: 1; transform: translateY(0); }
     }
     
-    .stSelectbox > div > div {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-        border: 2px solid #2E8B57 !important;
-        border-radius: 10px !important;
-    }
-    
-    .stNumberInput > div > div > input {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-        border: 2px solid #2E8B57 !important;
-        border-radius: 10px !important;
-        font-weight: 600 !important;
+    /* Override any Streamlit defaults */
+    .stMarkdown, .stMarkdown > div, .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+        color: inherit !important;
+        font-family: 'Poppins', sans-serif !important;
     }
     
     /* Scrollbar styling */
@@ -359,7 +459,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Global variables for model and data
+# All the same functions as before (load_data, train_and_save_model, predict_crop)
 @st.cache_data
 def load_data():
     """Load and cache the dataset"""
@@ -408,7 +508,7 @@ def train_and_save_model():
     return model
 
 def show_crop_image(crop_name):
-    """Display crop image if available with animation"""
+    """Display crop image if available with enhanced styling"""
     image_path = os.path.join('crop_images', f"{crop_name.lower()}.jpg")
     if os.path.exists(image_path):
         try:
@@ -419,7 +519,12 @@ def show_crop_image(crop_name):
         except Exception as e:
             st.warning(f"Could not load image for {crop_name}: {e}")
     else:
-        st.markdown(f'<div class="fade-in"><div class="metric-container"><h3>🌱 Recommended crop: <strong>{crop_name}</strong></h3></div></div>', unsafe_allow_html=True)
+        # Enhanced crop name display when image is not available
+        st.markdown(f'''
+        <div class="crop-name-display fade-in">
+            🌱 Recommended crop: <strong>{crop_name.title()}</strong>
+        </div>
+        ''', unsafe_allow_html=True)
 
 def predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rainfall):
     """Make crop prediction using the trained model"""
@@ -436,7 +541,7 @@ def predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rai
         return None
 
 def display_crop_info(crop_name):
-    """Display information about the recommended crop with animations"""
+    """Display information about the recommended crop with enhanced visibility"""
     crop_info = {
         'rice': {'season': 'Kharif', 'water': 'High', 'temp': '20-30°C', 'soil': 'Clay loam'},
         'wheat': {'season': 'Rabi', 'water': 'Moderate', 'temp': '15-25°C', 'soil': 'Loam'},
@@ -468,15 +573,42 @@ def display_crop_info(crop_name):
         'season': 'Variable', 'water': 'Moderate', 'temp': 'Variable', 'soil': 'Well-drained'
     })
     
+    # Enhanced crop information display
+    st.markdown('''
+    <div class="crop-info-section fade-in">
+        <h2 class="crop-info-header">📊 Crop Information</h2>
+    </div>
+    ''', unsafe_allow_html=True)
+    
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.markdown(f'<div class="fade-in"><div class="metric-container"><div class="metric-label">Season</div><div class="metric-value">{info["season"]}</div></div></div>', unsafe_allow_html=True)
+        st.markdown(f'''
+        <div class="crop-metric-card fade-in">
+            <div class="crop-metric-label">Season</div>
+            <div class="crop-metric-value">{info["season"]}</div>
+        </div>
+        ''', unsafe_allow_html=True)
     with col2:
-        st.markdown(f'<div class="fade-in"><div class="metric-container"><div class="metric-label">Water Need</div><div class="metric-value">{info["water"]}</div></div></div>', unsafe_allow_html=True)
+        st.markdown(f'''
+        <div class="crop-metric-card fade-in">
+            <div class="crop-metric-label">Water Need</div>
+            <div class="crop-metric-value">{info["water"]}</div>
+        </div>
+        ''', unsafe_allow_html=True)
     with col3:
-        st.markdown(f'<div class="fade-in"><div class="metric-container"><div class="metric-label">Temperature</div><div class="metric-value">{info["temp"]}</div></div></div>', unsafe_allow_html=True)
+        st.markdown(f'''
+        <div class="crop-metric-card fade-in">
+            <div class="crop-metric-label">Temperature</div>
+            <div class="crop-metric-value">{info["temp"]}</div>
+        </div>
+        ''', unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="fade-in"><div class="metric-container"><div class="metric-label">Soil Type</div><div class="metric-value">{info["soil"]}</div></div></div>', unsafe_allow_html=True)
+        st.markdown(f'''
+        <div class="crop-metric-card fade-in">
+            <div class="crop-metric-label">Soil Type</div>
+            <div class="crop-metric-value">{info["soil"]}</div>
+        </div>
+        ''', unsafe_allow_html=True)
 
 def create_interactive_gauge(value, min_val, max_val, label, unit, color):
     """Create an interactive gauge visualization"""
@@ -503,10 +635,10 @@ def main():
         st.info("Header image not found - continuing without it")
     
     # Animated title
-    st.markdown('<h1 class="main-header">🌾 SMART CROP RECOMMENDATIONS</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">AgriVerse Pro: 🌾 SMART CROP RECOMMENDATIONS</h1>', unsafe_allow_html=True)
     
     # Sidebar for inputs with enhanced styling
-    st.sidebar.title("🌱 AgriSens")
+    st.sidebar.title("🌱 AgriVerse Pro")
     st.sidebar.markdown("### Enter Soil & Environmental Parameters")
     
     # Input fields in sidebar
@@ -530,7 +662,7 @@ def main():
     st.markdown("""
     <div class="info-section">
         <h3>🎯 How It Works</h3>
-        <p>Our AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+        <p>Our AgriVerse Pro: AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -614,7 +746,7 @@ def main():
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Interactive prediction section
+    # Enhanced prediction section
     if predict_button:
         # Validate inputs
         if all([nitrogen > 0, phosphorus > 0, potassium > 0, temperature > 0, humidity > 0, ph > 0, rainfall >= 0]):
@@ -627,38 +759,41 @@ def main():
                 if prediction:
                     st.markdown("---")
                     
-                    # Animated prediction result
+                    # Enhanced prediction result with better visibility
                     st.markdown(f"""
                     <div class="prediction-box">
-                        <h2>🎉 Recommendation Result</h2>
-                        <h1 style="font-size: 3rem; margin: 1rem 0;">{prediction.title()}</h1>
-                        <p style="font-size: 1.3rem;">Based on your soil and environmental conditions, <strong>{prediction.title()}</strong> is the most suitable crop for your farm!</p>
+                        <h2 style="font-size: 2rem; margin-bottom: 1rem;">🎉 Recommendation Result</h2>
+                        <h1 style="font-size: 4rem; margin: 1rem 0; text-shadow: 3px 3px 6px rgba(0,0,0,0.3);">{prediction.title()}</h1>
+                        <p style="font-size: 1.4rem; margin-top: 1rem;">Based on your soil and environmental conditions, <strong>{prediction.title()}</strong> is the most suitable crop for your farm!</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     # Trigger balloons for celebration
                     st.balloons()
                     
-                    # Display crop image with animation
-                    st.subheader("🖼️ Crop Visualization")
+                    # Display crop image with enhanced visibility
+                    st.markdown('<div class="crop-recommendation-section">', unsafe_allow_html=True)
                     show_crop_image(prediction)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     
-                    # Display crop information with animations
-                    st.subheader("📊 Crop Information")
+                    # Display crop information with enhanced visibility
                     display_crop_info(prediction)
                     
-                    # Enhanced recommendations
-                    st.subheader("💡 Additional Recommendations")
+                    # Enhanced recommendations section with maximum visibility
                     st.markdown(f'''
-                    <div class="fade-in">
-                        <div class="metric-container" style="text-align: left; padding: 2rem;">
-                            <h4 style="color: #2E8B57; margin-bottom: 1rem;">Next Steps:</h4>
-                            <ul style="font-size: 1.1rem; line-height: 1.8;">
+                    <div class="recommendations-section fade-in">
+                        <h2 class="recommendations-header">💡 Additional Recommendations</h2>
+                        <div class="recommendations-content">
+                            <h4>Next Steps:</h4>
+                            <ul class="recommendations-list">
                                 <li>🔬 Consult with local agricultural experts about {prediction} cultivation</li>
                                 <li>💰 Check local market demand and pricing for {prediction}</li>
                                 <li>🔄 Consider crop rotation practices for sustainable farming</li>
                                 <li>🌦️ Monitor weather forecasts before planting</li>
                                 <li>🧪 Test soil samples for more accurate nutrient analysis</li>
+                                <li>🌱 Prepare appropriate fertilizers and soil amendments</li>
+                                <li>💧 Plan irrigation system based on {prediction} water requirements</li>
+                                <li>📅 Schedule planting according to optimal growing season</li>
                             </ul>
                         </div>
                     </div>
