@@ -22,7 +22,19 @@
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
-            --gradient-primary: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            import streamlit as st
+
+st.markdown(
+    """
+    <style>
+    :root {
+        --gradient-primary: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
             --gradient-accent: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
             --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             --gradient-warning: linear-gradient(135deg, #ffc107 0%, #ff9900 100%);
