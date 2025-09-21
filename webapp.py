@@ -20,7 +20,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Enhanced Custom CSS for better styling and visibility
+# Fixed Custom CSS for proper visibility
 st.markdown("""
 <style>
     .main-header {
@@ -31,67 +31,130 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         font-weight: bold;
     }
+    
+    .info-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2.5rem;
+        border-radius: 15px;
+        border: 3px solid #2E8B57;
+        margin: 2rem 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    
+    .info-section h3 {
+        color: #2E8B57 !important;
+        font-size: 2.2rem !important;
+        margin-bottom: 1.5rem !important;
+        font-weight: bold !important;
+        text-align: center !important;
+    }
+    
+    .info-section p {
+        color: #333333 !important;
+        font-size: 1.3rem !important;
+        text-align: center !important;
+        margin: 0 !important;
+        font-weight: 500 !important;
+        line-height: 1.6 !important;
+    }
+    
+    .feature-container {
+        display: flex;
+        justify-content: space-around;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+    
+    .feature-box {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        border: 2px solid #2E8B57;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        flex: 1;
+        margin: 0.5rem;
+    }
+    
+    .feature-box h4 {
+        color: #2E8B57 !important;
+        font-size: 1.4rem !important;
+        margin-bottom: 1rem !important;
+        font-weight: bold !important;
+    }
+    
+    .feature-box p {
+        color: #555 !important;
+        font-size: 1rem !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+    }
+    
+    .parameters-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        border: 2px solid #2E8B57;
+        margin: 2rem 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .section-header {
+        color: #2E8B57 !important;
+        font-size: 1.8rem !important;
+        font-weight: bold !important;
+        margin-bottom: 1.5rem !important;
+        text-align: center !important;
+        border-bottom: 2px solid #2E8B57;
+        padding-bottom: 0.5rem;
+    }
+    
+    .metric-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        padding: 1.5rem;
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+        margin: 0.5rem 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    
     .metric-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1rem;
+        padding: 1.5rem;
         border-radius: 10px;
         color: white;
         text-align: center;
         margin: 0.5rem 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
+    
     .prediction-box {
         background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-        padding: 2rem;
-        border-radius: 15px;
+        padding: 2.5rem;
+        border-radius: 20px;
         color: white;
         text-align: center;
-        margin: 1rem 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        margin: 2rem 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     }
-    .info-section {
-        background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        border-left: 8px solid #2E8B57;
-        margin: 1.5rem 0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
-    .info-section h3 {
-        color: #2E8B57;
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-        font-weight: bold;
-        text-align: center;
-    }
-    .info-section p {
-        color: #333;
-        font-size: 1.1rem;
-        text-align: justify;
-        margin: 0;
-        font-weight: 500;
-    }
-    .feature-box {
-        background: #ffffff;
-        padding: 1.5rem;
-        border-radius: 10px;
-        border: 2px solid #2E8B57;
-        margin: 1rem 0;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .feature-box h4 {
-        color: #2E8B57;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-    }
+    
+    /* Override Streamlit's default styles */
     .stMetric {
-        background: white;
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        background: white !important;
+        padding: 1rem !important;
+        border-radius: 8px !important;
+        border: 1px solid #e0e0e0 !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    }
+    
+    .stMetric > div {
+        color: #333 !important;
+    }
+    
+    .stMetric label {
+        font-weight: bold !important;
+        color: #2E8B57 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -247,16 +310,17 @@ def main():
     st.sidebar.markdown("---")
     predict_button = st.sidebar.button("🔮 Predict Crop", type="primary", use_container_width=True)
     
-    # Main content area - Enhanced "How It Works" section
+    # Main content area - Fixed "How It Works" section
     st.markdown("""
     <div class="info-section">
         <h3>🎯 How It Works</h3>
-        <p>Our AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. 
-        Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+        <p>Our AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Features section
+    # Features section with proper HTML structure
+    st.markdown('<div class="feature-container">', unsafe_allow_html=True)
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -283,33 +347,39 @@ def main():
         </div>
         """, unsafe_allow_html=True)
     
-    # Display current parameters
-    st.subheader("📋 Current Parameters")
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Parameters section with proper visibility
+    st.markdown('<div class="parameters-section">', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-header">📋 Current Parameters</h2>', unsafe_allow_html=True)
+    
     param_col1, param_col2 = st.columns(2)
     
     with param_col1:
-        st.metric("Nitrogen", f"{nitrogen} ppm", help="Essential for leaf growth and green color")
-        st.metric("Phosphorus", f"{phosphorus} ppm", help="Important for root development and flowering")
-        st.metric("Potassium", f"{potassium} ppm", help="Helps in disease resistance and fruit quality")
-        st.metric("Temperature", f"{temperature} °C", help="Average growing season temperature")
+        st.markdown(f'<div class="metric-container"><strong>Nitrogen</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{nitrogen} ppm</span><br><small>Essential for leaf growth and green color</small></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-container"><strong>Phosphorus</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{phosphorus} ppm</span><br><small>Important for root development and flowering</small></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-container"><strong>Potassium</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{potassium} ppm</span><br><small>Helps in disease resistance and fruit quality</small></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-container"><strong>Temperature</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{temperature} °C</span><br><small>Average growing season temperature</small></div>', unsafe_allow_html=True)
     
     with param_col2:
-        st.metric("Humidity", f"{humidity} %", help="Relative humidity percentage")
-        st.metric("pH Level", f"{ph}", help="Soil acidity/alkalinity level")
-        st.metric("Rainfall", f"{rainfall} mm", help="Annual precipitation amount")
+        st.markdown(f'<div class="metric-container"><strong>Humidity</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{humidity} %</span><br><small>Relative humidity percentage</small></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-container"><strong>pH Level</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{ph}</span><br><small>Soil acidity/alkalinity level</small></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="metric-container"><strong>Rainfall</strong><br><span style="font-size: 1.5rem; color: #2E8B57;">{rainfall} mm</span><br><small>Annual precipitation amount</small></div>', unsafe_allow_html=True)
         
         # Soil quality indicator
         if ph < 6.5:
             soil_status = "🔴 Acidic"
             ph_advice = "Consider adding lime to increase pH"
         elif ph > 7.5:
-            soil_status = "🔵 Alkaline"
+            soil_status = "🔵 Alkaline" 
             ph_advice = "Consider adding sulfur to decrease pH"
         else:
             soil_status = "🟢 Neutral"
             ph_advice = "Optimal pH range for most crops"
         
-        st.metric("Soil Status", soil_status, help=ph_advice)
+        st.markdown(f'<div class="metric-container"><strong>Soil Status</strong><br><span style="font-size: 1.5rem;">{soil_status}</span><br><small>{ph_advice}</small></div>', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Prediction section
     if predict_button:
