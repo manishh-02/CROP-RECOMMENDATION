@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 
 # Set page configuration
 st.set_page_config(
-    page_title="AgriVerse Pro: Smart Crop Recommendation",
+    page_title="AgriSens - Smart Crop Recommendation",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -635,10 +635,10 @@ def main():
         st.info("Header image not found - continuing without it")
     
     # Animated title
-    st.markdown('<h1 class="main-header">AgriVerse Pro: 🌾 SMART CROP RECOMMENDATIONS</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🌾 SMART CROP RECOMMENDATIONS</h1>', unsafe_allow_html=True)
     
     # Sidebar for inputs with enhanced styling
-    st.sidebar.title("🌱 AgriVerse Pro")
+    st.sidebar.title("🌱 AgriSens")
     st.sidebar.markdown("### Enter Soil & Environmental Parameters")
     
     # Input fields in sidebar
@@ -662,7 +662,7 @@ def main():
     st.markdown("""
     <div class="info-section">
         <h3>🎯 How It Works</h3>
-        <p>Our AgriVerse Pro: AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+        <p>Our AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
     </div>
     """, unsafe_allow_html=True)
     
