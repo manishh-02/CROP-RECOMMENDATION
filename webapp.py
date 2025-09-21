@@ -86,16 +86,15 @@ st.markdown("""
         box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
     }
     
-    /* FIXED: How It Works section text visibility */
     .info-section h3 {
-        color: #000000 !important;
+        color: #1e3c72 !important;
         font-size: 2.8rem !important;
         margin-bottom: 2rem !important;
         font-weight: 700 !important;
         text-align: center !important;
         position: relative !important;
         z-index: 1 !important;
-        text-shadow: none !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
     }
     
     .info-section p {
@@ -107,7 +106,7 @@ st.markdown("""
         line-height: 1.8 !important;
         position: relative !important;
         z-index: 1 !important;
-        text-shadow: none !important;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
     }
     
     .feature-box {
@@ -145,15 +144,14 @@ st.markdown("""
         border-color: #E55A2B !important;
     }
     
-    /* FIXED: Feature box text visibility */
     .feature-box h4 {
-        color: #000000 !important;
+        color: #FF6B35 !important;
         font-size: 1.8rem !important;
         margin-bottom: 1.5rem !important;
         font-weight: 700 !important;
         position: relative !important;
         z-index: 1 !important;
-        text-shadow: none !important;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
     }
     
     .feature-box p {
@@ -163,9 +161,7 @@ st.markdown("""
         margin: 0 !important;
         position: relative !important;
         z-index: 1 !important;
-        font-weight: 600 !important;
-        text-shadow: none !important;
-        opacity: 1 !important;
+        font-weight: 500 !important;
     }
     
     .parameters-section {
@@ -407,14 +403,12 @@ st.markdown("""
         margin-bottom: 1rem !important;
     }
     
-    /* FIXED: Metric description text visibility */
     .metric-description {
         font-size: 1rem !important;
-        color: #000000 !important;
+        color: #495057 !important;
         margin-top: 1rem !important;
         font-style: italic !important;
-        font-weight: 600 !important;
-        opacity: 1 !important;
+        font-weight: 500 !important;
     }
     
     .prediction-box {
@@ -458,24 +452,26 @@ st.markdown("""
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* FIXED: Prevent overlapping with MASSIVE spacing */
+    /* FIXED: Enhanced expander styling with proper spacing */
     .stExpander {
-        margin-top: 10rem !important;
-        margin-bottom: 8rem !important;
-        padding: 3rem !important;
+        margin-top: 6rem !important;
+        margin-bottom: 4rem !important;
+        padding: 2rem !important;
+        z-index: 10 !important;
+        position: relative !important;
     }
     
     .stExpander > div {
         background: #FFFFFF !important;
         border: 4px solid #6C757D !important;
         border-radius: 15px !important;
-        padding: 3rem !important;
+        padding: 2rem !important;
         box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
     }
     
     .stExpander > div > div {
         background: #FFFFFF !important;
-        padding: 2rem !important;
+        padding: 1.5rem !important;
     }
     
     .stExpander h3, .stExpander h4, .stExpander p, .stExpander li {
@@ -506,10 +502,9 @@ st.markdown("""
         margin-bottom: 2rem !important;
     }
     
-    /* Ensure footer has MASSIVE spacing */
+    /* Ensure footer has proper spacing */
     .main > div:last-child {
-        margin-bottom: 10rem !important;
-        padding-bottom: 10rem !important;
+        margin-bottom: 5rem !important;
     }
     
     /* Scrollbar styling */
@@ -736,7 +731,10 @@ def main():
     st.markdown("""
     <div class="info-section">
         <h3>🎯 How It Works</h3>
-        <p>Our AgriVerse Pro: AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.</p>
+        <p style="color: #000000 !important; font-size: 1.6rem !important; font-weight: 600 !important;">
+            Our AgriVerse Pro: AI-powered system analyzes soil nutrients and environmental conditions to recommend the most suitable crop for your farm. 
+            Simply enter your soil and weather parameters in the sidebar and click 'Predict Crop' to get instant recommendations.
+        </p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -879,10 +877,10 @@ def main():
         else:
             st.error("❌ Please enter valid values for all parameters (greater than 0, except rainfall which can be 0).")
     
-    # FIXED: MASSIVE spacing before expander to prevent ANY overlap
-    st.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
+    # FIXED: Enhanced footer with proper spacing to prevent overlap
+    st.markdown("<br><br><br>", unsafe_allow_html=True)  # Added extra spacing
     st.markdown("---")
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)  # More spacing
     
     with st.expander("ℹ️ About This System", expanded=False):
         st.markdown("""
@@ -938,8 +936,8 @@ def main():
             st.sidebar.info("💧 Humidity affects disease risk")
             st.sidebar.info("🌧️ Rainfall determines irrigation needs")
 
-    # MASSIVE final spacing to prevent any overlap
-    st.markdown("<br><br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
+    # Add final spacing to prevent any overlap
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
 
 if __name__ == '__main__':
     main()
