@@ -1,462 +1,728 @@
-import streamlit as st
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-import pickle
-import os
-import warnings
-from PIL import Image
-import time
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVision Pro | AI-Powered Crop Recommendation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-warnings.filterwarnings('ignore')
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #ff6b35;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gradient-primary: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --gradient-accent: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+            --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --gradient-warning: linear-gradient(135deg, #ffc107 0%, #ff9900 100%);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.25);
+            --transition: all 0.3s ease;
+            --transition-slow: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-# Set page configuration
-st.set_page_config(
-    page_title="AgriVerse Pro: Smart Crop Recommendation",
-    page_icon="🌾",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
 
-# Advanced CSS for interactive UI with gradients, transitions, and effects
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
-    
-    * {
-        font-family: 'Poppins', sans-serif !important;
-    }
-    
-    body {
-        background: linear-gradient(135deg, #e6f7ff 0%, #fff5e6 100%);
-        overflow: hidden;
-    }
-    
-    /* Particle background effect */
-    .particle-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-        animation: particle-move 10s infinite linear;
-        pointer-events: none;
-        z-index: -1;
-    }
-    
-    @keyframes particle-move {
-        0% { background-position: 0 0; }
-        100% { background-position: 100px 100px; }
-    }
-    
-    /* Main header with glow and gradient */
-    .main-header {
-        font-size: 3rem !important;
-        color: #ffffff !important;
-        background: linear-gradient(90deg, #4caf50, #2196f3);
-        text-align: center !important;
-        padding: 2rem !important;
-        border-radius: 20px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: header-glow 2s ease-in-out infinite alternate;
-    }
-    
-    @keyframes header-glow {
-        from { box-shadow: 0 10px 30px rgba(76,175,80,0.5); }
-        to { box-shadow: 0 15px 40px rgba(33,150,243,0.5); }
-    }
-    
-    /* Sidebar enhancements */
-    .stSidebar {
-        background: linear-gradient(180deg, #ffffff, #f0f4f8);
-        border-right: 2px solid #e2e8f0;
-        padding: 1rem;
-    }
-    
-    .stSidebar input {
-        background: #ffffff !important;
-        border: 2px solid #4caf50 !important;
-        border-radius: 10px !important;
-        transition: border 0.3s ease;
-    }
-    
-    .stSidebar input:focus {
-        border-color: #2196f3 !important;
-        box-shadow: 0 0 10px rgba(33,150,243,0.3);
-    }
-    
-    /* Button with gradient and hover effect */
-    .stButton > button {
-        background: linear-gradient(90deg, #4caf50, #66bb6a);
-        color: white !important;
-        border: none !important;
-        border-radius: 30px !important;
-        padding: 1rem 2rem !important;
-        font-weight: 700 !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(76,175,80,0.4);
-        background: linear-gradient(90deg, #66bb6a, #4caf50);
-    }
-    
-    /* Info section with fade-in and gradient border */
-    .info-section {
-        background: white !important;
-        padding: 3rem !important;
-        border-radius: 20px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        animation: fadeInUp 1s ease-out;
-        border-left: 5px solid transparent;
-        background: linear-gradient(white, white) padding-box,
-                    linear-gradient(to right, #4caf50, #2196f3) border-box;
-        border-image: linear-gradient(to right, #4caf50, #2196f3) 1;
-    }
-    
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(50px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .info-section h3 {
-        font-size: 2.5rem !important;
-        font-weight: 700 !important;
-        color: #2c3e50 !important;
-        margin-bottom: 1.5rem !important;
-    }
-    
-    .info-section p {
-        font-size: 1.2rem !important;
-        color: #4a5568 !important;
-        line-height: 1.8 !important;
-    }
-    
-    /* Feature cards with flip effect and gradients */
-    .feature-container {
-        display: flex;
-        justify-content: space-around;
-        gap: 2rem;
-        margin: 4rem 0;
-    }
-    
-    .feature-card {
-        flex: 1;
-        perspective: 1000px;
-        max-width: 300px;
-    }
-    
-    .feature-card-inner {
-        position: relative;
-        width: 100%;
-        height: 200px;
-        text-align: center;
-        transition: transform 0.6s;
-        transform-style: preserve-3d;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        border-radius: 15px;
-    }
-    
-    .feature-card:hover .feature-card-inner {
-        transform: rotateY(180deg);
-    }
-    
-    .feature-front, .feature-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
-        border-radius: 15px;
-        padding: 2rem;
-    }
-    
-    .feature-front {
-        background: linear-gradient(135deg, #f6ffed, #dcfce7);
-        color: #1f2937;
-    }
-    
-    .feature-back {
-        background: linear-gradient(135deg, #dcfce7, #f6ffed);
-        color: #1f2937;
-        transform: rotateY(180deg);
-    }
-    
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        background: linear-gradient(45deg, #4caf50, #8bc34a);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    
-    /* Parameters section with animated gauges */
-    .parameters-section {
-        background: white !important;
-        padding: 3rem !important;
-        border-radius: 20px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        animation: fadeInUp 1s ease-out 0.3s both;
-    }
-    
-    .gauge {
-        width: 100%;
-        height: 10px;
-        background: #e5e7eb;
-        border-radius: 5px;
-        overflow: hidden;
-        margin: 1rem 0;
-    }
-    
-    .gauge-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #4caf50, #2196f3);
-        transition: width 1s ease-in-out;
-    }
-    
-    /* Recommendation cards with hover zoom */
-    .rec-card {
-        background: white !important;
-        padding: 1.5rem !important;
-        border-radius: 15px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        margin-bottom: 1.5rem !important;
-    }
-    
-    .rec-card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    }
-    
-    /* Expander with accordion effect */
-    .stExpander {
-        border: none !important;
-    }
-    
-    .stExpander > div {
-        background: linear-gradient(135deg, #f0f4f8, #e2e8f0) !important;
-        border-radius: 15px !important;
-        padding: 2rem !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    
-    /* Global transitions */
-    [data-testid="stMarkdownContainer"] {
-        transition: opacity 0.5s ease-in-out;
-    }
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(45deg, #4caf50, #2196f3);
-        border-radius: 4px;
-    }
-</style>
-<div class="particle-bg"></div>
-""", unsafe_allow_html=True)
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-# Rest of the code remains unchanged, as per your request
-@st.cache_data
-def load_data():
-    try:
-        df = pd.read_csv('Crop_recommendation.csv')
-        return df
-    except FileNotFoundError:
-        st.error("Dataset 'Crop_recommendation.csv' not found. Please ensure the file is in the app directory.")
-        return None
+        /* Header Styles */
+        header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px 0;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
 
-@st.cache_resource
-def train_and_save_model():
-    model_path = 'RF.pkl'
-    df = load_data()
-    if df is None:
-        return None
-    X = df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']]
-    y = df['label']
-    if os.path.exists(model_path):
-        try:
-            with open(model_path, 'rb') as f:
-                return pickle.load(f)
-        except:
-            pass
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    model = RandomForestClassifier(n_estimators=20, random_state=5)
-    model.fit(X_train, y_train)
-    try:
-        with open(model_path, 'wb') as f:
-            pickle.dump(model, f)
-    except Exception as e:
-        st.warning(f"Could not save model: {e}")
-    return model
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 4s infinite;
+            z-index: 1;
+        }
 
-def show_crop_image(crop_name):
-    image_path = os.path.join('crop_images', f"{crop_name.lower()}.jpg")
-    if os.path.exists(image_path):
-        try:
-            crop_image = Image.open(image_path)
-            st.image(crop_image, caption=f"Recommended crop: {crop_name}", use_column_width=True)
-        except Exception as e:
-            st.warning(f"Could not load image for {crop_name}: {e}")
-    else:
-        st.info(f"🌱 Recommended crop: **{crop_name}** (Image not available)")
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
 
-def predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rainfall):
-    model = train_and_save_model()
-    if model is None:
-        return None
-    try:
-        input_data = np.array([[nitrogen, phosphorus, potassium, temperature, humidity, ph, rainfall]])
-        return model.predict(input_data)[0]
-    except Exception as e:
-        st.error(f"Prediction error: {e}")
-        return None
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
 
-def display_crop_info(crop_name):
-    crop_info = {
-        'rice': {'season': 'Kharif', 'water': 'High', 'temp': '20-30°C', 'soil': 'Clay loam'},
-        # ... (all other crop info unchanged) ...
-        'mungbean': {'season': 'Kharif/Summer', 'water': 'Moderate', 'temp': '25-35°C', 'soil': 'Well-drained'},
-    }
-    info = crop_info.get(crop_name.lower(), {'season': 'Variable', 'water': 'Moderate', 'temp': 'Variable', 'soil': 'Well-drained'})
-    st.subheader("📊 Crop Information")
-    cols = st.columns(4)
-    for col, (key, value) in zip(cols, info.items()):
-        col.markdown(f"<div style='background: linear-gradient(135deg, #f0fff4, #c6f6d5); padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);'><b>{key}</b><br>{value}</div>", unsafe_allow_html=True)
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-def create_interactive_gauge(value, min_val, max_val, label, unit, color):
-    percentage = (value - min_val) / (max_val - min_val) * 100
-    return f"""
-    <div style="margin: 1rem 0; animation: fadeInUp 0.5s ease-out;">
-        <div style="font-weight: 500; color: #4a5568; margin-bottom: 0.5rem;">{label}</div>
-        <div class="gauge">
-            <div class="gauge-fill" style="width: {percentage}%; background: {color};"></div>
+        .logo i {
+            font-size: 2.5rem;
+            color: #ffd700;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+        }
+
+        .logo-text {
+            font-family: 'Roboto Slab', serif;
+            font-weight: 700;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 15px;
+            border-radius: 50px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-family: 'Roboto Slab', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--dark);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin: 40px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            font-family: 'Roboto Slab', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Input Form Section */
+        .input-section {
+            padding: 80px 0;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin: 40px 0;
+            color: white;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-family: 'Roboto Slab', serif;
+            font-size: 2.2rem;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .slider-container {
+            margin-top: 10px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+        }
+
+        .value-display {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(229, 90, 43, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(229, 90, 43, 0.6);
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 80px 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .result-card {
+            background: var(--gradient-success);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin: 0 auto;
+            max-width: 600px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5); }
+            50% { transform: scale(1.02); box-shadow: 0 15px 40px rgba(40, 167, 69, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 10px 30px rgba(40, 167, 69, 0.5); }
+        }
+
+        .result-card h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-card p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .crop-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 0 auto 30px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 40px 0;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-family: 'Roboto Slab', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: #ffd700;
+            transform: translateY(-3px);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            color: #ffd700;
+            transform: translateY(-5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-seedling"></i>
+                    <div class="logo-text">AgriVision Pro</div>
+                </div>
+                <div class="nav-links">
+                    <a href="#"><i class="fas fa-home"></i> Home</a>
+                    <a href="#"><i class="fas fa-info-circle"></i> About</a>
+                    <a href="#"><i class="fas fa-cogs"></i> Features</a>
+                    <a href="#"><i class="fas fa-phone"></i> Contact</a>
+                </div>
+            </div>
         </div>
-        <div style="text-align: center; font-weight: 700; color: #2d3748;">{value:.1f} {unit}</div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content fade-in">
+                <h1>AI-Powered Crop Recommendation System</h1>
+                <p>Maximize your agricultural yield with our advanced AI system that analyzes soil conditions, climate data, and environmental factors to recommend the perfect crops for your farm.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary"><i class="fas fa-play"></i> Get Started</button>
+                    <button class="btn btn-outline"><i class="fas fa-book"></i> Learn More</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2 class="section-title">How It Works</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <h3>Soil Analysis</h3>
+                    <p>Our system analyzes NPK levels and pH balance of your soil to determine the optimal conditions for different crops.</p>
+                </div>
+                <div class="feature-card fade-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3>Climate Check</h3>
+                    <p>We evaluate temperature, humidity, and rainfall patterns to match crops with your local climate conditions.</p>
+                </div>
+                <div class="feature-card fade-in delay-3">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Prediction</h3>
+                    <p>Our advanced machine learning algorithm processes all data to provide accurate crop recommendations with over 95% accuracy.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <h2 class="section-title" style="color: white;">Enter Your Farm Details</h2>
+            <div class="form-container">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="nitrogen">Nitrogen Level (N)</label>
+                        <input type="range" min="0" max="140" value="50" class="slider" id="nitrogen">
+                        <div class="value-display">Value: <span id="nitrogen-value">50</span> ppm</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="phosphorus">Phosphorus Level (P)</label>
+                        <input type="range" min="0" max="145" value="50" class="slider" id="phosphorus">
+                        <div class="value-display">Value: <span id="phosphorus-value">50</span> ppm</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="potassium">Potassium Level (K)</label>
+                        <input type="range" min="0" max="205" value="50" class="slider" id="potassium">
+                        <div class="value-display">Value: <span id="potassium-value">50</span> ppm</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="temperature">Temperature</label>
+                        <input type="range" min="0" max="50" value="25" class="slider" id="temperature">
+                        <div class="value-display">Value: <span id="temperature-value">25</span> °C</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="humidity">Humidity</label>
+                        <input type="range" min="0" max="100" value="60" class="slider" id="humidity">
+                        <div class="value-display">Value: <span id="humidity-value">60</span> %</div>
+                    </div>
+                    <div class="input-group">
+                        <label for="ph">pH Level</label>
+                        <input type="range" min="0" max="14" value="7" step="0.1" class="slider" id="ph">
+                        <div class="value-display">Value: <span id="ph-value">7</span></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="rainfall">Rainfall</label>
+                        <input type="range" min="0" max="500" value="100" class="slider" id="rainfall">
+                        <div class="value-display">Value: <span id="rainfall-value">100</span> mm</div>
+                    </div>
+                </div>
+                <button class="submit-btn" id="predict-btn">
+                    <i class="fas fa-calculator"></i> Predict Optimal Crop
+                </button>
+            </div>
+        </section>
+
+        <section class="results-section" id="results" style="display: none;">
+            <h2 class="section-title">Recommended Crop</h2>
+            <div class="result-card">
+                <img src="https://images.unsplash.com/photo-1612393266591-c3292f8a3a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Wheat" class="crop-image">
+                <h2>Wheat</h2>
+                <p>Based on your soil and climate conditions, wheat is the most suitable crop for your farm with a 92% compatibility score.</p>
+                <button class="btn btn-outline"><i class="fas fa-download"></i> Download Full Report</button>
+            </div>
+        </section>
     </div>
-    """
 
-def main():
-    # Header
-    st.markdown('<h1 class="main-header">AgriVerse Pro: 🌾 Smart Crop Recommendation</h1>', unsafe_allow_html=True)
-    
-    # Sidebar
-    st.sidebar.title("🌱 AgriVerse Pro")
-    st.sidebar.markdown("### Input Parameters")
-    nitrogen = st.sidebar.number_input("Nitrogen (N)", 0.0, 140.0, 50.0)
-    phosphorus = st.sidebar.number_input("Phosphorus (P)", 0.0, 145.0, 50.0)
-    potassium = st.sidebar.number_input("Potassium (K)", 0.0, 205.0, 50.0)
-    temperature = st.sidebar.number_input("Temperature (°C)", 0.0, 51.0, 25.0)
-    humidity = st.sidebar.number_input("Humidity (%)", 0.0, 100.0, 60.0)
-    ph = st.sidebar.number_input("pH Level", 0.0, 14.0, 7.0)
-    rainfall = st.sidebar.number_input("Rainfall (mm)", 0.0, 500.0, 100.0)
-    predict_button = st.sidebar.button("Predict Crop")
-
-    # How It Works
-    st.markdown("""
-    <div class="info-section">
-        <h3>🎯 How It Works</h3>
-        <p>Enter soil and weather data in the sidebar, and let our AI recommend the best crop with 95%+ accuracy.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Feature Cards with flip effect
-    st.markdown('<div class="feature-container">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-card-inner">
-                <div class="feature-front">
-                    <div class="feature-icon">🧪</div>
-                    <div class="feature-title">Soil Analysis</div>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">AgriVision Pro</div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact Us</a>
                 </div>
-                <div class="feature-back">
-                    <div class="feature-description">Analyzes NPK levels and pH for optimal crop selection.</div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-card-inner">
-                <div class="feature-front">
-                    <div class="feature-icon">🌤</div>
-                    <div class="feature-title">Climate Check</div>
-                </div>
-                <div class="feature-back">
-                    <div class="feature-description">Evaluates temperature, humidity, and rainfall patterns.</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-card-inner">
-                <div class="feature-front">
-                    <div class="feature-icon">🤖</div>
-                    <div class="feature-title">AI Prediction</div>
-                </div>
-                <div class="feature-back">
-                    <div class="feature-description">Uses advanced ML for accurate crop recommendations.</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    </footer>
 
-    # Parameters
-    st.markdown('<div class="parameters-section">', unsafe_allow_html=True)
-    st.subheader("Current Parameters", anchor=None)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown(create_interactive_gauge(nitrogen, 0, 140, "Nitrogen", "ppm", "#4caf50"), unsafe_allow_html=True)
-        st.markdown(create_interactive_gauge(phosphorus, 0, 145, "Phosphorus", "ppm", "#ffc107"), unsafe_allow_html=True)
-        st.markdown(create_interactive_gauge(potassium, 0, 205, "Potassium", "ppm", "#f56565"), unsafe_allow_html=True)
-        st.markdown(create_interactive_gauge(temperature, 0, 51, "Temperature", "°C", "#ed64a6"), unsafe_allow_html=True)
-    with col2:
-        st.markdown(create_interactive_gauge(humidity, 0, 100, "Humidity", "%", "#4299e1"), unsafe_allow_html=True)
-        st.markdown(create_interactive_gauge(ph, 0, 14, "pH Level", "", "#48bb78"), unsafe_allow_html=True)
-        st.markdown(create_interactive_gauge(rainfall, 0, 500, "Rainfall", "mm", "#667eea"), unsafe_allow_html=True)
-        # Soil status (unchanged logic)
-        if ph < 6.5:
-            status = "Acidic - Add lime"
-        elif ph > 7.5:
-            status = "Alkaline - Add sulfur"
-        else:
-            status = "Neutral - Optimal"
-        st.markdown(f"<div style='background: linear-gradient(135deg, #f0fff4, #c6f6d5); padding: 2rem; border-radius: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);'><b>Soil Status</b><br><span style='font-size: 1.5rem; font-weight: 700;'>{status}</span></div>", unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    <script>
+        // Update slider values in real-time
+        const sliders = document.querySelectorAll('.slider');
+        sliders.forEach(slider => {
+            const valueDisplay = slider.nextElementSibling.querySelector('span');
+            valueDisplay.textContent = slider.value;
+            
+            slider.addEventListener('input', () => {
+                valueDisplay.textContent = slider.value;
+            });
+        });
 
-    if predict_button:
-        prediction = predict_crop(nitrogen, phosphorus, potassium, temperature, humidity, ph, rainfall)
-        if prediction:
-            st.success(f"Recommended Crop: {prediction.upper()}")
-            show_crop_image(prediction)
-            display_crop_info(prediction)
-            st.markdown('<div style="margin-top: 3rem;"><h3>Recommendations</h3></div>', unsafe_allow_html=True)
-            recs = [
-                "Consult local experts for planting tips.",
-                "Monitor weather for the next week.",
-                "Prepare soil with recommended fertilizers."
-            ]
-            for rec in recs:
-                st.markdown(f'<div class="rec-card">{rec}</div>', unsafe_allow_html=True)
+        // Show results on button click
+        const predictBtn = document.getElementById('predict-btn');
+        const resultsSection = document.getElementById('results');
+        
+        predictBtn.addEventListener('click', () => {
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Add confetti effect (simulated)
+            predictBtn.innerHTML = '<i class="fas fa-check"></i> Prediction Complete!';
+            predictBtn.style.background = 'var(--gradient-success)';
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Predict Optimal Crop';
+                predictBtn.style.background = 'var(--gradient-accent)';
+            }, 3000);
+        });
 
-    # About section
-    with st.expander("ℹ️ About This System"):
-        st.write("This app uses AI to recommend crops based on soil and climate data.")
+        // Add animations on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
 
-if __name__ == '__main__':
-    main()
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .section-title').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
